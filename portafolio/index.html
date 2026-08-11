@@ -72,6 +72,10 @@ main{padding-bottom:clamp(2rem,6vw,4rem)}
 .bento{
   display:grid; grid-template-columns:repeat(6,1fr); gap:var(--gap);
   align-items:stretch;
+  /* dense = si un mosaico no cabe en la fila, el grid mete el siguiente que sí
+     quepa en vez de dejar el hueco negro. Es lo que sostiene la mezcla de
+     horizontales y verticales cuando cambia el número de columnas. */
+  grid-auto-flow:row dense;
 }
 .tile{
   position:relative; overflow:hidden; border-radius:var(--r);
@@ -88,6 +92,7 @@ main{padding-bottom:clamp(2rem,6vw,4rem)}
 .tile[data-size="sm"]{grid-column:span 2; aspect-ratio:4/3}
 .tile[data-size="tall"]{grid-column:span 2; aspect-ratio:9/16}
 .tile[data-size="info"]{grid-column:span 2}
+.tile[data-size="cta"]{grid-column:span 2}
 
 /* media dentro del tile */
 .media{position:absolute; inset:0; overflow:hidden; background:var(--petroleo)}
@@ -155,6 +160,23 @@ main{padding-bottom:clamp(2rem,6vw,4rem)}
 .info-bot .btn{width:100%; justify-content:center; font-size:.8rem; padding:.8rem 1rem}
 .info-name{font-size:.72rem; color:var(--salvia); letter-spacing:.14em; text-transform:uppercase; margin-top:.75rem; text-align:center; opacity:.75}
 
+/* mosaico de cierre: cuadra la última banda y da salida al prospecto */
+.tile[data-size="cta"]{
+  background:linear-gradient(200deg, var(--card-2) 0%, var(--petroleo) 55%, var(--negro) 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  gap:.9rem; padding:clamp(1.3rem,2.4vw,1.9rem); min-height:210px;
+}
+.cta-lens{width:38px; height:38px; color:var(--salvia); opacity:.55}
+.cta-h{
+  font-family:var(--display); font-weight:400; text-transform:uppercase; line-height:.96;
+  font-size:clamp(1.5rem,2.7vw,2.1rem); letter-spacing:.015em;
+}
+.cta-p{font-size:.79rem; color:var(--salvia); line-height:1.6; max-width:24ch}
+
+/* en un mosaico vertical el titular tiene menos ancho */
+.tile[data-size="tall"] .ttitle{font-size:clamp(1.05rem,1.7vw,1.4rem)}
+.tile[data-size="tall"] .tcat{font-size:.58rem; letter-spacing:.22em}
+
 /* ===== FOOTER ===== */
 footer{
   border-top:1px solid var(--line); padding:clamp(2rem,5vw,3rem) 0 clamp(2.5rem,6vw,3.5rem);
@@ -200,6 +222,7 @@ footer{
   .tile[data-size="sm"]{grid-column:span 2}
   .tile[data-size="tall"]{grid-column:span 2}
   .tile[data-size="info"]{grid-column:span 4; min-height:0}
+  .tile[data-size="cta"]{grid-column:span 2}
   .info-bot .btn{width:auto}
   .info-name{text-align:left}
   .lb-nav.prev{left:4px} .lb-nav.next{right:4px}
@@ -212,8 +235,19 @@ footer{
   .tile[data-size="lg"]{grid-column:span 2; aspect-ratio:16/10}
   .tile[data-size="md"]{grid-column:span 2; aspect-ratio:16/10}
   .tile[data-size="sm"]{grid-column:span 2; aspect-ratio:16/10}
-  .tile[data-size="tall"]{grid-column:span 2; aspect-ratio:4/5}
+  /* los verticales van de dos en dos: es donde mejor se lee el 9:16 */
+  .tile[data-size="tall"]{grid-column:span 1; aspect-ratio:9/16}
+  /* si el número de verticales es impar, el último se queda sin pareja y
+     abre un hueco negro. El JS lo marca y aquí se le da el ancho completo. */
+  .tile[data-size="tall"].odd-last{grid-column:span 2; aspect-ratio:4/5}
+  .tile[data-size="tall"].odd-last .ttitle{font-size:clamp(1.15rem,2.4vw,2rem)}
+  .tile[data-size="tall"].odd-last .tinfo{padding:1rem}
+  .tile[data-size="tall"] .tinfo{padding:.7rem}
+  .tile[data-size="tall"] .vplay{width:34px; height:34px; top:.6rem; right:.6rem}
+  .tile[data-size="tall"] .vplay svg{width:15px; height:15px}
+  .tile[data-size="tall"] .dur{bottom:.7rem; right:.7rem; font-size:.62rem}
   .tile[data-size="info"]{grid-column:span 2}
+  .tile[data-size="cta"]{grid-column:span 2}
   .brand svg{height:27px}
   .vplay{width:40px; height:40px}
 }
@@ -321,6 +355,37 @@ var TILES = [
     dur:'0:41'
   },
   {
+    tipo:'video', size:'tall',
+    cat:'Negocios comerciales',
+    titulo:'Catch × realme',
+    cliente:'realme',
+    prev:'../videos/prev-realme.mp4',
+    hd:'../videos/catch-realme.mp4',
+    poster:'../videos/poster-realme.jpg',
+    dur:'0:54'
+  },
+  {
+    tipo:'video', size:'tall',
+    cat:'Eventos',
+    titulo:'Catch × HYCORE',
+    cliente:'HYCORE',
+    prev:'../videos/prev-hycore.mp4',
+    hd:'../videos/catch-hycore.mp4',
+    poster:'../videos/poster-hycore.jpg',
+    dur:'1:02'
+  },
+  {
+    tipo:'video', size:'tall',
+    cat:'Eventos',
+    titulo:'Catch × MDS',
+    cliente:'MDS',
+    prev:'../videos/prev-mds.mp4',
+    hd:'../videos/catch-mds.mp4',
+    poster:'../videos/poster-mds.jpg',
+    dur:'1:15'
+  },
+
+  {
     tipo:'video', size:'md',
     cat:'Negocios comerciales',
     titulo:'Catch × WAHL',
@@ -339,7 +404,30 @@ var TILES = [
     hd:'../videos/catch-truemakeup.mp4',
     poster:'../videos/poster-truemakeup.jpg',
     dur:'1:01'
-  }
+  },
+
+  {
+    tipo:'video', size:'tall',
+    cat:'Vertical · Redes',
+    titulo:'Catch × Truemakeup',
+    cliente:'True Makeup',
+    prev:'../videos/prev-truemakeup-v.mp4',
+    hd:'../videos/catch-truemakeup-v.mp4',
+    poster:'../videos/poster-truemakeup-v.jpg',
+    dur:'0:59'
+  },
+  {
+    tipo:'video', size:'tall',
+    cat:'Viajes',
+    titulo:'Nueva York',
+    cliente:'Pieza propia',
+    prev:'../videos/prev-nyc.mp4',
+    hd:'../videos/catch-nyc.mp4',
+    poster:'../videos/poster-nyc.jpg',
+    dur:'0:34'
+  },
+
+  { tipo:'cta' }
 ];
 
 (function(){
@@ -372,6 +460,20 @@ var TILES = [
       return;
     }
 
+    if(t.tipo === 'cta'){
+      var cta = document.createElement('div');
+      cta.className = 'tile';
+      cta.setAttribute('data-size','cta');
+      cta.innerHTML =
+        '<svg class="cta-lens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">' +
+          '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/></svg>' +
+        '<div class="cta-h">¿Grabamos<br>lo tuyo?</div>' +
+        '<p class="cta-p">Cuéntame qué necesitas y te paso propuesta y costo.</p>' +
+        '<a class="btn btn-wa" href="https://wa.me/message/MRQD3GPUILESJ1" target="_blank" rel="noopener">Escríbeme</a>';
+      bento.appendChild(cta);
+      return;
+    }
+
     var i = videos.length;
     videos.push(t);
 
@@ -396,6 +498,11 @@ var TILES = [
       '</div>';
     bento.appendChild(el);
   });
+
+  /* en móvil los verticales se acomodan de dos en dos; si sobra uno,
+     se marca para que ocupe el ancho completo y no deje hueco */
+  var talls = bento.querySelectorAll('.tile[data-size="tall"]');
+  if(talls.length % 2 === 1) talls[talls.length - 1].classList.add('odd-last');
 
   /* ---- aparición escalonada ---- */
   var tiles = bento.querySelectorAll('.tile');
