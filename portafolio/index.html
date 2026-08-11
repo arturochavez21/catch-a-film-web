@@ -188,12 +188,19 @@ footer{
 .foot-txt a:hover{color:var(--bruma); border-color:var(--salvia)}
 
 /* ===== LIGHTBOX ===== */
+/* por encima del grano (z-index 9999), si no el ruido queda sobre el video.
+   OJO: se oculta con visibility/opacity, NUNCA con display:none. Un <video>
+   dentro de un contenedor en display:none queda fuera del árbol de render y
+   Chrome no le arranca la reproducción: el lightbox abría en negro. */
 .lb{
-  position:fixed; inset:0; z-index:1000; display:none;
+  position:fixed; inset:0; z-index:10000;
+  display:flex; align-items:center; justify-content:center;
   background:rgba(3,7,7,.96); backdrop-filter:blur(14px);
   padding:clamp(1rem,4vw,3rem);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .25s ease, visibility .25s ease;
 }
-.lb.open{display:flex; align-items:center; justify-content:center}
+.lb.open{opacity:1; visibility:visible; pointer-events:auto}
 .lb-inner{width:100%; max-width:1200px; position:relative}
 .lb video{
   width:100%; max-height:78vh; border-radius:10px; background:#000; display:block;
@@ -209,6 +216,17 @@ footer{
   transition:background .2s, color .2s, transform .2s;
 }
 .lb-close:hover, .lb-nav:hover{background:var(--bruma); color:var(--negro); transform:scale(1.07)}
+.lb-sound{
+  position:absolute; left:50%; transform:translateX(-50%); bottom:78px; z-index:6;
+  display:inline-flex; align-items:center; gap:.5rem; cursor:pointer;
+  font-family:var(--body); font-weight:700; font-size:.82rem; letter-spacing:.03em;
+  padding:.7rem 1.2rem; border-radius:999px;
+  background:var(--bruma); color:var(--negro); border:0;
+  box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+.lb-sound[hidden]{display:none}
+.lb-sound:hover{background:#fff}
+.lb-sound svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
 .lb-close{top:-58px; right:0}
 .lb-close svg, .lb-nav svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round}
 .lb-nav.prev{left:-62px; top:50%; margin-top:-23px}
@@ -316,7 +334,11 @@ noscript .ns{
     <button class="lb-close" id="lbClose" aria-label="Cerrar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <button class="lb-nav prev" id="lbPrev" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <button class="lb-nav next" id="lbNext" aria-label="Siguiente"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
-    <video id="lbVideo" controls playsinline preload="none"></video>
+    <video id="lbVideo" controls playsinline preload="metadata"></video>
+    <button class="lb-sound" id="lbSound" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a4.5 4.5 0 0 1 0 7"/><path d="M19 5.5a8.5 8.5 0 0 1 0 13"/></svg>
+      Activar sonido
+    </button>
     <div class="lb-meta">
       <span class="lb-title" id="lbTitle"></span>
       <span class="lb-client" id="lbClient"></span>
@@ -551,23 +573,50 @@ var TILES = [
   var lbVideo = document.getElementById('lbVideo');
   var lbTitle = document.getElementById('lbTitle');
   var lbClient = document.getElementById('lbClient');
+  var sound = document.getElementById('lbSound');
   var cur = 0, lastFocus = null;
+
+  // el clic aquí sí es un gesto del usuario: el navegador ya permite el audio
+  sound.addEventListener('click', function(){
+    lbVideo.muted = false;
+    var p = lbVideo.play();
+    if(p && p.catch) p.catch(function(){});
+    sound.hidden = true;
+  });
 
   function open(i){
     cur = (i + videos.length) % videos.length;
     var t = videos[cur];
     lastFocus = document.activeElement;
+    lbVideo.muted = false;   // si el anterior cayó al modo silencio, se reinicia
     lbVideo.poster = t.poster || '';
+    // el <video> nace con preload="none" para no bajar nada al abrir la página.
+    // Al asignarle src por código hay que subirlo a "auto" y llamar load(): sin eso
+    // el elemento se queda en networkState IDLE, no descarga y el play() se descarta.
+    lbVideo.preload = 'auto';
     lbVideo.src = t.hd;
+    lbVideo.load();
     lbTitle.textContent = t.titulo || '';
     lbClient.textContent = t.cliente || '';
     lb.classList.add('open');
     document.body.classList.add('locked');
+
+    // El navegador puede rechazar el play() con sonido (política de
+    // reproducción automática, o porque el archivo tardó en cargar y el clic
+    // ya "caducó"). Si eso pasa, arranca en silencio y ofrece el sonido a un
+    // clic: lo que NO puede pasar es quedarse congelado en el póster.
+    sound.hidden = true;
     var p = lbVideo.play();
-    if(p && p.catch) p.catch(function(){});
+    if(p && p.catch) p.catch(function(){
+      lbVideo.muted = true;
+      var p2 = lbVideo.play();
+      if(p2 && p2.catch) p2.catch(function(){});
+      sound.hidden = false;
+    });
     document.getElementById('lbClose').focus();
   }
   function close(){
+    sound.hidden = true;
     lb.classList.remove('open');
     document.body.classList.remove('locked');
     lbVideo.pause();
