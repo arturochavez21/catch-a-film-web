@@ -1,0 +1,5 @@
+# Videos y posters: se guardan 30 dias en el navegador, para que volver a la
+# pagina no vuelva a bajarlos. Si se reemplaza un video, cambiarle el nombre.
+<FilesMatch "\.(mp4|jpg|jpeg|webp)$">
+  Header set Cache-Control "public, max-age=2592000"
+</FilesMatch>

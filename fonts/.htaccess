@@ -1,0 +1,4 @@
+# Las fuentes nunca cambian de contenido: se guardan un año en el navegador.
+<FilesMatch "\.woff2$">
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>

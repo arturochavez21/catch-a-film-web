@@ -11,8 +11,17 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://catchafilmstudio.com/videos/poster-reel.jpg">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../fonts.css">
+<link rel="preload" as="font" type="font/woff2" href="../fonts/impact.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="../fonts/montserrat-400.woff2" crossorigin>
+<link rel="preload" as="image" href="../videos/lite-poster-reel.jpg">
 <style>
+/* Fuentes en WOFF2 recortadas al alfabeto que se usa: 36 KB en total.
+   Antes iban en base64 dentro de un CSS aparte de 1.4 MB (660 KB comprimido)
+   que bloqueaba el primer pintado: en celular era pantalla en blanco.
+   font-display:swap = el texto se ve de inmediato con la fuente del sistema. */
+@font-face{font-family:'CatchImpact'; font-display:swap; src:url(../fonts/impact.woff2) format('woff2')}
+@font-face{font-family:'Montserrat'; font-weight:400; font-display:swap; src:url(../fonts/montserrat-400.woff2) format('woff2')}
+@font-face{font-family:'Montserrat'; font-weight:700; font-display:swap; src:url(../fonts/montserrat-700.woff2) format('woff2')}
 :root{
   --negro:#050A0A; --petroleo:#0D191F; --card:#11212A; --card-2:#152935;
   --salvia:#BBC9C7; --bruma:#E0EAE9; --line:rgba(187,201,199,.14);
@@ -371,7 +380,7 @@ var TILES = [
     cat:'Demo Reel',
     titulo:'Catch a Film Studio',
     cliente:'Selección 2026',
-    prev:'../videos/prev-reel.mp4',
+    prev:'../videos/lite-reel.mp4',
     hd:'../videos/demo-reel.mp4',
     poster:'../videos/poster-reel.jpg',
     dur:'0:41'
@@ -381,7 +390,7 @@ var TILES = [
     cat:'Negocios comerciales',
     titulo:'Catch × realme',
     cliente:'realme',
-    prev:'../videos/prev-realme.mp4',
+    prev:'../videos/lite-realme.mp4',
     hd:'../videos/catch-realme.mp4',
     poster:'../videos/poster-realme.jpg',
     dur:'0:54'
@@ -391,7 +400,7 @@ var TILES = [
     cat:'Eventos',
     titulo:'Catch × HYCORE',
     cliente:'HYCORE',
-    prev:'../videos/prev-hycore.mp4',
+    prev:'../videos/lite-hycore.mp4',
     hd:'../videos/catch-hycore.mp4',
     poster:'../videos/poster-hycore.jpg',
     dur:'1:02'
@@ -401,7 +410,7 @@ var TILES = [
     cat:'Eventos',
     titulo:'Catch × MDS',
     cliente:'MDS',
-    prev:'../videos/prev-mds.mp4',
+    prev:'../videos/lite-mds.mp4',
     hd:'../videos/catch-mds.mp4',
     poster:'../videos/poster-mds.jpg',
     dur:'1:15'
@@ -412,7 +421,7 @@ var TILES = [
     cat:'Negocios comerciales',
     titulo:'Catch × WAHL',
     cliente:'WAHL Professional',
-    prev:'../videos/prev-wahl.mp4',
+    prev:'../videos/lite-wahl.mp4',
     hd:'../videos/catch-wahl.mp4',
     poster:'../videos/poster-wahl.jpg',
     dur:'1:14'
@@ -422,7 +431,7 @@ var TILES = [
     cat:'Eventos',
     titulo:'Catch × Truemakeup',
     cliente:'True Makeup',
-    prev:'../videos/prev-truemakeup.mp4',
+    prev:'../videos/lite-truemakeup.mp4',
     hd:'../videos/catch-truemakeup.mp4',
     poster:'../videos/poster-truemakeup.jpg',
     dur:'1:01'
@@ -433,7 +442,7 @@ var TILES = [
     cat:'Vertical · Redes',
     titulo:'Catch × Truemakeup',
     cliente:'True Makeup',
-    prev:'../videos/prev-truemakeup-v.mp4',
+    prev:'../videos/lite-truemakeup-v.mp4',
     hd:'../videos/catch-truemakeup-v.mp4',
     poster:'../videos/poster-truemakeup-v.jpg',
     dur:'0:59'
@@ -443,7 +452,7 @@ var TILES = [
     cat:'Viajes',
     titulo:'Nueva York',
     cliente:'Pieza propia',
-    prev:'../videos/prev-nyc.mp4',
+    prev:'../videos/lite-nyc.mp4',
     hd:'../videos/catch-nyc.mp4',
     poster:'../videos/poster-nyc.jpg',
     dur:'0:34'
@@ -507,7 +516,7 @@ var TILES = [
     el.setAttribute('aria-label', 'Ver ' + (t.titulo || 'video'));
     el.innerHTML =
       '<div class="media">' +
-        '<img class="poster" src="' + esc(t.poster) + '" alt="" loading="lazy">' +
+        '<img class="poster" src="' + esc(String(t.poster).replace('poster-','lite-poster-')) + '" alt="" loading="lazy" decoding="async">' +
         '<video muted loop playsinline preload="none" data-src="' + esc(t.prev) + '"></video>' +
       '</div>' +
       '<div class="veil"></div>' +
@@ -548,24 +557,68 @@ var TILES = [
   var saveData = navigator.connection && navigator.connection.saveData;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // En celular se reproduce UN mosaico a la vez (el más visible) en vez de
+  // todos los que caben en pantalla: en una red móvil, tres o cuatro videos
+  // bajando a la vez se pelean el ancho de banda y ninguno arranca.
+  var unoALaVez = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
+
   if('IntersectionObserver' in window && !saveData && !reduce){
+    var visibles = [];
+
+    function arranca(v){
+      if(!v) return;
+      if(!v.src){
+        v.src = v.getAttribute('data-src');
+        v.addEventListener('loadeddata', function(){ v.classList.add('ready'); }, { once:true });
+      }
+      var p = v.play();
+      if(p && p.catch) p.catch(function(){});
+    }
+
+    function decide(){
+      if(!unoALaVez){
+        visibles.forEach(function(t){ arranca(t.querySelector('video')); });
+        return;
+      }
+      // el que tenga el centro más cerca del centro de la pantalla
+      var medio = window.innerHeight / 2, mejor = null, dmin = Infinity;
+      visibles.forEach(function(t){
+        var r = t.getBoundingClientRect();
+        var d = Math.abs((r.top + r.bottom) / 2 - medio);
+        if(d < dmin){ dmin = d; mejor = t; }
+      });
+      visibles.forEach(function(t){
+        var v = t.querySelector('video');
+        if(!v) return;
+        if(t === mejor) arranca(v); else v.pause();
+      });
+    }
+
     var playIO = new IntersectionObserver(function(entries){
       entries.forEach(function(e){
-        var v = e.target.querySelector('video');
-        if(!v) return;
-        if(e.isIntersecting){
-          if(!v.src){
-            v.src = v.getAttribute('data-src');
-            v.addEventListener('loadeddata', function(){ v.classList.add('ready'); }, { once:true });
-          }
-          var p = v.play();
-          if(p && p.catch) p.catch(function(){});
-        } else {
-          v.pause();
+        var i = visibles.indexOf(e.target);
+        if(e.isIntersecting && i < 0) visibles.push(e.target);
+        else if(!e.isIntersecting && i >= 0) visibles.splice(i, 1);
+        if(!e.isIntersecting){
+          var v = e.target.querySelector('video');
+          if(v) v.pause();
         }
       });
+      decide();
     }, { threshold:.35 });
+
     bento.querySelectorAll('.v-tile').forEach(function(t){ playIO.observe(t); });
+
+    // el observer solo avisa al cruzar el umbral; al desplazarse despacio hay
+    // que recalcular cuál es el mosaico central
+    if(unoALaVez){
+      var pend = false;
+      window.addEventListener('scroll', function(){
+        if(pend) return;
+        pend = true;
+        setTimeout(function(){ pend = false; decide(); }, 250);
+      }, { passive:true });
+    }
   }
 
   /* ---- LIGHTBOX ---- */

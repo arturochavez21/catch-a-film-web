@@ -1,0 +1,5 @@
+# El HTML se revalida en cada visita: así un cambio se ve al instante y no hay
+# que andar limpiando la caché del navegador. Pesa 32 KB, no cuesta nada.
+<FilesMatch "\.html$">
+  Header set Cache-Control "no-cache, must-revalidate"
+</FilesMatch>
