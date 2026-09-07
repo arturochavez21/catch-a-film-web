@@ -214,11 +214,15 @@ foreach ($gals as $g) {
     $slug = $g['slug'];
     $n = count(gallery_photos($slug));
     $size = dir_size(orig_dir($slug));
+    $cover = gallery_cover($slug);
+    $thumb = $cover
+        ? "<img class='gthumb' loading='lazy' src='/galerias/media.php?g=" . h($slug) . "&s=thumb&f=" . rawurlencode($cover) . "'>"
+        : "<span class='gthumb empty'></span>";
     $exp = !empty($g['expires']) ? date('d/m/Y', (int)$g['expires']) : 'sin límite';
     $st = is_expired($g) ? "<span class='pill bad'>expirada</span>" : "<span class='pill ok'>activa</span>";
     $zipst = is_file(zip_path($slug)) ? "<span class='pill ok'>zip</span>" : "<span class='pill warn'>sin zip</span>";
     $rows .= "<tr>
-        <td><a href='/galerias/admin.php?g=" . h($slug) . "'><b>" . h($g['title']) . "</b></a><br><span class='muted small'>/galerias/" . h($slug) . "</span></td>
+        <td><div class='gcell'>$thumb<div><a href='/galerias/admin.php?g=" . h($slug) . "'><b>" . h($g['title']) . "</b></a><br><span class='muted small'>/galerias/" . h($slug) . "</span></div></div></td>
         <td>$n fotos<br><span class='muted small'>" . human_bytes($size) . "</span></td>
         <td>$st<br><span class='muted small'>hasta $exp</span></td>
         <td>$zipst</td>
