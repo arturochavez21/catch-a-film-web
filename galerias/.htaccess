@@ -1,0 +1,16 @@
+# Galerías Catch — URLs bonitas + seguridad
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /galerias/
+  # /galerias/<slug>  ->  gallery.php?g=<slug>
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^([a-z0-9][a-z0-9-]{1,60})/?$ gallery.php?g=$1 [L,QSA]
+</IfModule>
+
+# Nunca servir estos por HTTP
+<FilesMatch "\.(json|hash|md)$">
+  Require all denied
+</FilesMatch>

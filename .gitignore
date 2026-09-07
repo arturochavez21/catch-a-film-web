@@ -1,1 +1,6 @@
 .DS_Store
+
+# Galerías de cliente: el código va en git; las fotos/hash/caché viven en el servidor
+galerias/data/*
+!galerias/data/.htaccess
+!galerias/data/index.php
