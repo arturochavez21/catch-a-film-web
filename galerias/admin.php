@@ -202,6 +202,7 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
         <div class='copied-note' id='copiedNote' hidden></div>
 
         <h2>Fotos <span class='muted' id='pgCount'>(" . count($photos) . ")</span></h2>
+        <p class='muted small grid-hint'>En cada foto: <b>&#9733;</b> la hace <b>portada</b> (la que ve el cliente al entrar) · <b>&times;</b> la borra.</p>
         <div class='pgrid' id='pgrid'>$grid</div>
         <p class='muted small' id='pgEmpty'" . ($photos ? " hidden" : "") . ">Aún no hay fotos. Arrastra algunas arriba para empezar.</p>
      </div>", 'Galería: ' . ($gm['title'] ?? ''), true);
