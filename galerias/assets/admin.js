@@ -88,3 +88,42 @@
   }
   function refreshCount() { if (countEl) countEl.textContent = '(' + grid.querySelectorAll('.pg-item:not(.up)').length + ')'; }
 })();
+
+// ===== Generar link: copiar link + contraseña al portapapeles =====
+(function () {
+  var cl = document.getElementById('copyLink');
+  if (!cl) return;
+  var note = document.getElementById('copiedNote');
+  cl.addEventListener('click', function () {
+    var url = cl.dataset.url, pass = cl.dataset.pass, title = cl.dataset.title, exp = cl.dataset.exp;
+    var msg = 'Hola 👋 Aquí está tu galería de fotos de Catch a Film Studio:\n\n'
+      + '📸 ' + title + '\n'
+      + '🔗 ' + url + '\n'
+      + (pass ? '🔒 Contraseña: ' + pass + '\n' : '')
+      + (exp ? '\nDisponible hasta el ' + exp + '.\n' : '\n')
+      + '¡Que las disfrutes!';
+    copyText(msg);
+  });
+  function done(ok) {
+    if (ok) {
+      var orig = cl.innerHTML;
+      cl.innerHTML = '✓ ¡Copiado!';
+      if (note) { note.hidden = false; note.textContent = 'Mensaje copiado — pégalo en WhatsApp o correo y envíalo al cliente.'; }
+      setTimeout(function () { cl.innerHTML = orig; }, 2200);
+    }
+  }
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { fb(text); });
+    } else { fb(text); }
+  }
+  function fb(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    if (ok) done(true);
+    else if (note) { note.hidden = false; note.innerHTML = 'Copia esto manualmente:'; var t = document.createElement('textarea'); t.className = 'copy-manual'; t.value = text; note.appendChild(t); t.select(); }
+  }
+})();

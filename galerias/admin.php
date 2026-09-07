@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf_ok()) {
             $slug = slugify($title); $base = $slug; $n = 2;
             while (load_gallery($slug)) { $slug = $base . '-' . $n; $n++; }
             @mkdir(orig_dir($slug), 0775, true);
-            save_gallery($slug, ['title'=>$title,'pass_hash'=>password_hash($pw,PASSWORD_DEFAULT),
+            save_gallery($slug, ['title'=>$title,'pass_hash'=>password_hash($pw,PASSWORD_DEFAULT),'pass_plain'=>$pw,
                 'created'=>time(),'expires'=>$months>0?strtotime("+$months months"):0]);
             header('Location: /galerias/admin.php?g=' . rawurlencode($slug)); exit; // va directo a subir fotos
         }
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf_ok()) {
         $slug = $_POST['slug']; $goto = $slug; $m = load_gallery($slug);
         if ($m) {
             if (trim($_POST['title'] ?? '') !== '') $m['title'] = trim($_POST['title']);
-            if (($_POST['password'] ?? '') !== '')  $m['pass_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            if (($_POST['password'] ?? '') !== '') { $m['pass_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT); $m['pass_plain'] = $_POST['password']; }
             if (($_POST['months'] ?? '') !== '')     $m['expires'] = (int)$_POST['months']>0 ? strtotime('+'.(int)$_POST['months'].' months') : 0;
             save_gallery($slug, $m); $msg = 'Galería actualizada.';
         }
@@ -134,6 +134,9 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
     $size = dir_size(orig_dir($gv));
     $hasZip = is_file(zip_path($gv));
     $exp = !empty($gm['expires']) ? date('d/m/Y', (int)$gm['expires']) : 'sin límite';
+    $passPlain = $gm['pass_plain'] ?? '';
+    $link = SITE_URL . '/galerias/' . $gv;
+    $expData = !empty($gm['expires']) ? date('d/m/Y', (int)$gm['expires']) : '';
     $cover = gallery_cover($gv, $gm);
     $grid = '';
     foreach ($photos as $f) {
@@ -163,7 +166,8 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
         " . ($msg ? "<div class='note ok'>".h($msg)."</div>" : "") . ($err ? "<div class='note bad'>".h($err)."</div>" : "") . "
         <div class='gv-head'>
           <div><div class='eyebrow'>Galería</div><h1>" . h($gm['title']) . "</h1>
-            <p class='muted small'>" . count($photos) . " fotos · " . human_bytes($size) . " · disponible hasta $exp ·
+            <p class='muted small'>" . count($photos) . " fotos · " . human_bytes($size) . " · disponible hasta $exp" .
+              ($passPlain ? " · contraseña: <b>" . h($passPlain) . "</b>" : "") . " ·
             <a target=_blank href='/galerias/" . h($gv) . "'>ver como cliente ↗</a></p></div>
         </div>
 
@@ -177,12 +181,14 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
         </div>
 
         <div class='zipbar'>
+          <button class='btn small' id='copyLink' data-url='" . h($link) . "' data-pass='" . h($passPlain) . "' data-title='" . h($gm['title']) . "' data-exp='" . h($expData) . "'>&#128279; Generar link (copiar link + contraseña)</button>
           <form method=post onsubmit=\"return confirm('¿Preparar la descarga completa (zip)? Puede tardar en galerías grandes.')\">
             <input type=hidden name=csrf value='$tok'><input type=hidden name=action value=zip><input type=hidden name=slug value='$gv'>
-            <button class='btn small'>&#8595; Preparar descarga (zip)</button>
+            <button class='btn small ghost2'>&#8595; Preparar descarga (zip)</button>
           </form>
           <div>$zipLine</div>
         </div>
+        <div class='copied-note' id='copiedNote' hidden></div>
 
         <h2>Fotos <span class='muted' id='pgCount'>(" . count($photos) . ")</span></h2>
         <div class='pgrid' id='pgrid'>$grid</div>

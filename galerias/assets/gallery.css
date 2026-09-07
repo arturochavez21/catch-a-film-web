@@ -133,3 +133,9 @@ code{background:var(--bg2);padding:.1rem .4rem;border-radius:4px;font-size:.85em
 .pg-cover button:hover{background:var(--accent)}
 .pg-badge{position:absolute;top:6px;left:6px;z-index:2;font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:#fff;padding:.15rem .45rem;border-radius:20px;font-weight:700}
 .pg-item.is-cover{outline:2px solid var(--accent)}
+
+/* botón secundario + aviso de copiado */
+.zipbar .ghost2{background:none;border:1px solid var(--line);color:var(--text)}
+.zipbar .ghost2:hover{border-color:var(--accent);box-shadow:none;transform:none}
+.copied-note{margin:.5rem 0 0;color:#7fe0b0;font-size:.85rem}
+.copy-manual{width:100%;max-width:520px;margin-top:.5rem;height:120px;background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:.6rem;font-size:.8rem}
