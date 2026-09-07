@@ -78,6 +78,15 @@ function is_expired($meta) {
     return !empty($meta['expires']) && time() > (int)$meta['expires'];
 }
 
+// Foto de portada (la elegida por el admin, o la primera si no hay)
+function gallery_cover($slug, $meta = null) {
+    $photos = gallery_photos($slug);
+    if (!$photos) return null;
+    $meta = $meta ?? load_gallery($slug);
+    $c = $meta['cover'] ?? '';
+    return ($c && in_array($c, $photos, true)) ? $c : $photos[0];
+}
+
 // --- Autenticación de cliente por galería ---
 function client_authed($slug) {
     boot_session();

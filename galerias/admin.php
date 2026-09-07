@@ -114,6 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf_ok()) {
             $msg = 'Foto eliminada.';
         }
     }
+    elseif ($action === 'setcover' && valid_slug($_POST['slug'] ?? '')) {
+        $slug = $_POST['slug']; $goto = $slug; $f = basename($_POST['file'] ?? '');
+        $m = load_gallery($slug);
+        if ($m && in_array($f, gallery_photos($slug), true)) { $m['cover'] = $f; save_gallery($slug, $m); $msg = 'Portada actualizada.'; }
+    }
     elseif ($action === 'delete' && valid_slug($_POST['slug'] ?? '')) {
         rrmdir(gal_dir($_POST['slug'])); $msg = 'Galería eliminada.';
     }
@@ -129,16 +134,22 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
     $size = dir_size(orig_dir($gv));
     $hasZip = is_file(zip_path($gv));
     $exp = !empty($gm['expires']) ? date('d/m/Y', (int)$gm['expires']) : 'sin límite';
+    $cover = gallery_cover($gv, $gm);
     $grid = '';
     foreach ($photos as $f) {
         $ef = rawurlencode($f);
-        $grid .= "<div class='pg-item' data-f='" . h($f) . "'>
+        $isC = ($f === $cover);
+        $grid .= "<div class='pg-item" . ($isC ? ' is-cover' : '') . "' data-f='" . h($f) . "'>
             <img loading='lazy' src='/galerias/media.php?g=$gv&s=thumb&f=$ef'>
-            <form method=post class='pg-del' onsubmit=\"return confirm('¿Borrar esta foto?')\">
-              <input type=hidden name=csrf value='$tok'><input type=hidden name=action value=delphoto>
-              <input type=hidden name=slug value='$gv'><input type=hidden name=file value='" . h($f) . "'>
-              <button title='Borrar'>&times;</button>
-            </form></div>";
+            " . ($isC ? "<span class='pg-badge'>&#9733; Portada</span>" : "") . "
+            <div class='pg-tools'>
+              <form method=post class='pg-cover'><input type=hidden name=csrf value='$tok'><input type=hidden name=action value=setcover>
+                <input type=hidden name=slug value='$gv'><input type=hidden name=file value='" . h($f) . "'>
+                <button title='Hacer portada'>" . ($isC ? '&#9733;' : '&#9734;') . "</button></form>
+              <form method=post class='pg-del' onsubmit=\"return confirm('¿Borrar esta foto?')\"><input type=hidden name=csrf value='$tok'><input type=hidden name=action value=delphoto>
+                <input type=hidden name=slug value='$gv'><input type=hidden name=file value='" . h($f) . "'>
+                <button title='Borrar'>&times;</button></form>
+            </div></div>";
     }
     $zipLine = $hasZip
         ? "<span class='pill ok'>zip listo</span> <span class='muted small'>Se recomienda re-armarlo si agregas o quitas fotos.</span>"

@@ -55,18 +55,23 @@ if (!client_authed($slug)) {
     $tok = csrf_token();
     $title = h($meta['title'] ?? 'Galería');
     $err = $error ? "<p class='err'>" . h($error) . "</p>" : '';
+    $hasCover = gallery_cover($slug, $meta) !== null;
+    $heroStyle = $hasCover ? " style=\"background-image:url('/galerias/cover.php?g=$slug')\"" : '';
+    $cls = $hasCover ? 'login-hero has-cover' : 'login-hero';
     page($meta['title'] ?? 'Galería',
-        "<div class='center'>
-           <div class='logo'>CAT<b>CH</b><small>A FILM STUDIO</small></div>
-           <div class='eyebrow'>Galería privada</div>
-           <h1>$title</h1>
-           <p class='muted'>Ingresa la contraseña que te compartimos para ver y descargar tus fotos.</p>
-           <form method=post class='pwform'>
-             <input type=hidden name=csrf value='$tok'>
-             <input type=password name=password placeholder='Contraseña' autofocus required>
-             <button class='btn' type=submit>Entrar</button>
-           </form>
-           $err
+        "<div class='$cls'$heroStyle>
+           <div class='center'>
+             <div class='logo'>CAT<b>CH</b><small>A FILM STUDIO</small></div>
+             <div class='eyebrow'>Galería privada</div>
+             <h1>$title</h1>
+             <p class='muted'>Ingresa la contraseña que te compartimos para ver y descargar tus fotos.</p>
+             <form method=post class='pwform'>
+               <input type=hidden name=csrf value='$tok'>
+               <input type=password name=password placeholder='Contraseña' autofocus required>
+               <button class='btn' type=submit>Entrar</button>
+             </form>
+             $err
+           </div>
          </div>", $slug);
 }
 

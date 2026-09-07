@@ -106,3 +106,30 @@ code{background:var(--bg2);padding:.1rem .4rem;border-radius:4px;font-size:.85em
 .pg-del button{width:26px;height:26px;border-radius:50%;border:none;background:rgba(8,9,10,.72);color:#fff;cursor:pointer;font-size:1.05rem;line-height:1;opacity:0;transition:opacity .2s,background .2s}
 .pg-item:hover .pg-del button{opacity:1}
 .pg-del button:hover{background:#e05a5a}
+
+/* ===== login con portada (teaser) ===== */
+.login-hero{position:relative;min-height:100svh}
+.login-hero.has-cover{background-size:cover;background-position:center}
+.login-hero.has-cover::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,7,8,.5),rgba(6,7,8,.84))}
+.login-hero .center{position:relative;z-index:1;min-height:100svh}
+.login-hero.has-cover h1{text-shadow:0 2px 26px rgba(0,0,0,.7)}
+.login-hero.has-cover .center p{text-shadow:0 1px 14px rgba(0,0,0,.7)}
+.login-hero.has-cover .pwform input{background:rgba(10,12,13,.72);backdrop-filter:blur(6px)}
+
+/* ===== progreso por foto en el cargador ===== */
+.pg-item.up img{opacity:.5}
+.pg-up{position:absolute;inset:0;display:flex;align-items:flex-end;background:rgba(6,7,8,.22)}
+.pg-bar{display:block;width:100%;height:5px;background:rgba(255,255,255,.16)}
+.pg-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .15s}
+.pg-item.err{outline:2px solid #e05a5a}
+.pg-item.err img{opacity:.35}
+.pg-erm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ffb0b0;font-size:.7rem;text-align:center;padding:.3rem}
+
+/* ===== portada + herramientas en la rejilla ===== */
+.pg-tools{position:absolute;top:4px;right:4px;display:flex;gap:4px}
+.pg-tools form{margin:0;position:static}
+.pg-tools button{width:26px;height:26px;border-radius:50%;border:none;background:rgba(8,9,10,.72);color:#fff;cursor:pointer;font-size:.95rem;line-height:1;opacity:0;transition:opacity .2s,background .2s}
+.pg-item:hover .pg-tools button{opacity:1}
+.pg-cover button:hover{background:var(--accent)}
+.pg-badge{position:absolute;top:6px;left:6px;z-index:2;font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:#fff;padding:.15rem .45rem;border-radius:20px;font-weight:700}
+.pg-item.is-cover{outline:2px solid var(--accent)}
