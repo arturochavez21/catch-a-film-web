@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Catch a Film Studio — Productora de cine</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -181,6 +182,11 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
 @media(max-width:520px){.pal .lbl{display:none}}
 .demo-note{position:fixed;top:4.6rem;right:1rem;z-index:90;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:.35rem .7rem;background:rgba(11,21,19,.6);backdrop-filter:blur(8px)}
 
+.marq-track img.mlogo{height:clamp(26px,3.4vw,40px);width:auto;object-fit:contain;opacity:.6;filter:brightness(0) invert(1);transition:opacity .3s}
+.marq-track:hover img.mlogo{opacity:.9}
+.svc-bg{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;opacity:.4;transition:opacity .6s}
+.svc-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(11,8,9,.62),rgba(11,8,9,.5) 45%,rgba(11,8,9,.8))}
+.svc-stage{position:relative;z-index:2}
 .intro-video{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;opacity:.24}
 .intro::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(11,8,9,.55) 0%,rgba(11,8,9,.32) 42%,rgba(11,8,9,.86) 100%)}
 .wcard{cursor:pointer}
@@ -215,7 +221,7 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
   <div class="logo" data-cursor>CAT<b>CH</b><small>A FILM STUDIO</small></div>
   <div class="nav-r">
     <div class="nav-links">
-      <a href="#svc">Servicios</a><a href="#work">Trabajo</a><a href="#proc">Proceso</a><a href="#cierre">Contacto</a>
+      <a href="#svc">Servicios</a><a href="#work">Proyectos</a><a href="#proc">Proceso</a><a href="#cierre">Contacto</a>
     </div>
     <a class="btn btn-accent" data-magnetic data-cursor href="https://wa.me/message/MRQD3GPUILESJ1" target="_blank" rel="noopener">Cotiza</a>
   </div>
@@ -261,12 +267,13 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
 <!-- SERVICIOS scene-swap -->
 <section class="svc" id="svc">
   <div class="pin">
+    <video class="svc-bg" id="svcBg" muted loop playsinline poster="/videos/lite-poster-truemakeup.jpg"></video><div class="svc-scrim"></div>
     <div class="svc-side">02 — Lo que ponemos en escena</div>
     <div class="svc-stage">
-      <div class="svc-scene on" data-i="0"><span class="n">01 / Eventos</span><h2 class="grad">Eventos</h2><p>Bodas, celebraciones y momentos irrepetibles, convertidos en una pieza que emociona.</p></div>
-      <div class="svc-scene" data-i="1"><span class="n">02 / Negocios</span><h2 class="grad">Negocios</h2><p>Video que hace que tu marca se vea —y se venda— mejor: producto, servicio y campañas.</p></div>
-      <div class="svc-scene" data-i="2"><span class="n">03 / Marca personal</span><h2 class="grad">Marca<br>personal</h2><p>Contenido que te posiciona y suena a ti, con la consistencia de una producción profesional.</p></div>
-      <div class="svc-scene" data-i="3"><span class="n">04 / Podcast</span><h2 class="grad">Podcast</h2><p>Producción multicámara, audio limpio y clips listos para redes, de principio a fin.</p></div>
+      <div class="svc-scene on" data-i="0" data-bg="/videos/lite-truemakeup.mp4"><span class="n">01 / Eventos</span><h2 class="grad">Eventos</h2><p>Bodas, celebraciones y momentos irrepetibles, convertidos en una pieza que emociona.</p></div>
+      <div class="svc-scene" data-i="1" data-bg="/videos/lite-wahl.mp4"><span class="n">02 / Negocios</span><h2 class="grad">Negocios</h2><p>Video que hace que tu marca se vea —y se venda— mejor: producto, servicio y campañas.</p></div>
+      <div class="svc-scene" data-i="2" data-bg="/videos/lite-realme.mp4"><span class="n">03 / Marca personal</span><h2 class="grad">Marca<br>personal</h2><p>Contenido que te posiciona y suena a ti, con la consistencia de una producción profesional.</p></div>
+      <div class="svc-scene" data-i="3" data-bg="/videos/prev-podcast.mp4"><span class="n">04 / Podcast</span><h2 class="grad">Podcast</h2><p>Producción multicámara, audio limpio y clips listos para redes, de principio a fin.</p></div>
     </div>
     <div class="svc-ticks" id="svcTicks">
       <button class="on" data-i="0">Eventos</button>
@@ -280,7 +287,7 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
 <!-- TRABAJO horizontal -->
 <section class="work" id="work">
   <div class="pin">
-    <div class="work-head"><span class="eyebrow">03 — El trabajo</span><h2>Escenas que ya <span class="grad">filmamos</span></h2></div>
+    <div class="work-head"><span class="eyebrow">03 — Proyectos</span><h2>Escenas que ya <span class="grad">filmamos</span></h2></div>
     <div class="work-track" id="workTrack">
       <a class="wcard" data-cursor data-key="sipnav"><video class="wvid" muted loop playsinline preload="none" poster="/videos/lite-poster-sipnav.jpg" data-src="/videos/lite-sipnav.mp4"></video><span class="scrim"></span><span class="idx">01</span><div class="arrow">↗</div><div class="wmeta"><div class="c">Corporativo</div><h3>Catch × Sipnav</h3></div></a>
       <a class="wcard" data-cursor data-key="truemakeup"><video class="wvid" muted loop playsinline preload="none" poster="/videos/lite-poster-truemakeup.jpg" data-src="/videos/lite-truemakeup.mp4"></video><span class="scrim"></span><span class="idx">02</span><div class="arrow">↗</div><div class="wmeta"><div class="c">Eventos</div><h3>Catch × Truemakeup</h3></div></a>
@@ -320,8 +327,8 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
     </div>
     <div class="marq">
       <div class="marq-track">
-        <span>True Makeup</span><span>·</span><span><b>Sipnav</b></span><span>·</span><span>WAHL</span><span>·</span><span>Soul Dance</span><span>·</span><span><b>Realme</b></span><span>·</span><span>HyCore</span><span>·</span><span>Tobiko</span><span>·</span><span><b>Louis Café</b></span><span>·</span><span>Barberini</span><span>·</span><span>Fight Nights</span><span>·</span>
-        <span>True Makeup</span><span>·</span><span><b>Sipnav</b></span><span>·</span><span>WAHL</span><span>·</span><span>Soul Dance</span><span>·</span><span><b>Realme</b></span><span>·</span><span>HyCore</span><span>·</span><span>Tobiko</span><span>·</span><span><b>Louis Café</b></span><span>·</span><span>Barberini</span><span>·</span><span>Fight Nights</span><span>·</span>
+        <img class="mlogo" src="/logos/01-true-makeup.png" alt="True Makeup"><img class="mlogo" src="/logos/02-cih.png" alt="CIH"><img class="mlogo" src="/logos/03-ric.png" alt="RIC"><img class="mlogo" src="/logos/04-da-scrubs.png" alt="Da Scrubs"><img class="mlogo" src="/logos/05-the-physio.png" alt="The Physio"><img class="mlogo" src="/logos/06-wahl.png" alt="WAHL"><img class="mlogo" src="/logos/07-coca-cola.png" alt="Coca-Cola"><img class="mlogo" src="/logos/08-carls-jr.png" alt="Carl's Jr">
+        <img class="mlogo" src="/logos/01-true-makeup.png" alt="True Makeup"><img class="mlogo" src="/logos/02-cih.png" alt="CIH"><img class="mlogo" src="/logos/03-ric.png" alt="RIC"><img class="mlogo" src="/logos/04-da-scrubs.png" alt="Da Scrubs"><img class="mlogo" src="/logos/05-the-physio.png" alt="The Physio"><img class="mlogo" src="/logos/06-wahl.png" alt="WAHL"><img class="mlogo" src="/logos/07-coca-cola.png" alt="Coca-Cola"><img class="mlogo" src="/logos/08-carls-jr.png" alt="Carl's Jr">
       </div>
     </div>
   </div>
@@ -386,7 +393,9 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
   var work=document.getElementById('work'), track=document.getElementById('workTrack');
   var procNum=document.getElementById('procNum'), steps=document.querySelectorAll('.step');
   function prog01(el){var r=el.getBoundingClientRect();var t=r.height-innerHeight;return t<=0?0:Math.min(1,Math.max(0,(-r.top)/t));}
-  function setSvc(n){ if(n===svcActive)return; svcActive=n; svcScenes.forEach(function(s){s.classList.toggle('on',+s.dataset.i===n);}); svcTicks.forEach(function(b){b.classList.toggle('on',+b.dataset.i===n);}); }
+  var svcBg=document.getElementById('svcBg');
+  function setSvc(n){ if(n===svcActive)return; svcActive=n; svcScenes.forEach(function(s){s.classList.toggle('on',+s.dataset.i===n);}); svcTicks.forEach(function(b){b.classList.toggle('on',+b.dataset.i===n);});
+    if(svcBg && !reduce){ var bg=svcScenes[n] && svcScenes[n].getAttribute('data-bg'); if(bg && svcBg.getAttribute('src')!==bg){ svcBg.setAttribute('src',bg); svcBg.play&&svcBg.play().catch(function(){}); } } }
   var ticking=false;
   function frame(){
     ticking=false;
