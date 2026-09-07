@@ -9,8 +9,12 @@ $size = ($_GET['s'] ?? 'thumb') === 'web' ? 'web' : 'thumb';
 $file = basename($_GET['f'] ?? '');
 
 $meta = load_gallery($slug);
-if (!$meta || is_expired($meta)) { http_response_code(404); exit; }
-if (!client_authed($slug))       { http_response_code(403); exit('No autorizado'); }
+if (!$meta) { http_response_code(404); exit; }
+// El admin puede ver miniaturas aunque la galería esté expirada; el cliente no.
+if (!admin_authed()) {
+    if (is_expired($meta))      { http_response_code(404); exit; }
+    if (!client_authed($slug))  { http_response_code(403); exit('No autorizado'); }
+}
 if (!preg_match('/\.(jpe?g|png)$/i', $file)) { http_response_code(400); exit; }
 
 $orig = orig_dir($slug) . '/' . $file;
