@@ -121,6 +121,8 @@ function admin_login($pw) {
 
 // --- Utilidades ---
 function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+// Versión de asset (para romper caché del navegador cuando cambia el archivo)
+function asset_ver($rel) { return @filemtime(__DIR__ . '/' . $rel) ?: '1'; }
 function human_bytes($b) {
     $u = ['B','KB','MB','GB','TB']; $i = 0;
     while ($b >= 1024 && $i < 4) { $b /= 1024; $i++; }

@@ -13,9 +13,9 @@ function page($title, $body, $slug = '') {
     echo "<meta name=viewport content='width=device-width,initial-scale=1'>";
     echo "<meta name=robots content='noindex,nofollow'>";
     echo "<title>$t · " . h(SITE_NAME) . "</title>";
-    echo "<link rel=stylesheet href='/galerias/assets/gallery.css'></head><body>";
+    echo "<link rel=stylesheet href='/galerias/assets/gallery.css?v=" . asset_ver('assets/gallery.css') . "'></head><body>";
     echo $body;
-    if ($slug) echo "<script src='/galerias/assets/gallery.js'></script>";
+    if ($slug) echo "<script src='/galerias/assets/gallery.js?v=" . asset_ver('assets/gallery.js') . "'></script>";
     echo "</body></html>";
     exit;
 }

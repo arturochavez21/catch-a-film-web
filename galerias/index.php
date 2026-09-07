@@ -7,7 +7,7 @@ header('Content-Type: text/html; charset=utf-8');
 <meta name=viewport content='width=device-width,initial-scale=1'>
 <meta name=robots content='noindex,nofollow'>
 <title>Galerías privadas · <?=h(SITE_NAME)?></title>
-<link rel=stylesheet href='/galerias/assets/gallery.css'></head><body>
+<link rel=stylesheet href='/galerias/assets/gallery.css?v=<?=asset_ver('assets/gallery.css')?>'></head><body>
 <div class='center'>
   <div class='logo'>CAT<b>CH</b><small>A FILM STUDIO</small></div>
   <div class='eyebrow'>Galerías privadas</div>

@@ -9,9 +9,9 @@ function admin_page($body, $title = 'Admin', $withJs = false) {
     echo "<meta name=viewport content='width=device-width,initial-scale=1'>";
     echo "<meta name=robots content='noindex,nofollow'>";
     echo "<title>" . h($title) . " · Galerías</title>";
-    echo "<link rel=stylesheet href='/galerias/assets/gallery.css'></head><body class='admin'>";
+    echo "<link rel=stylesheet href='/galerias/assets/gallery.css?v=" . asset_ver('assets/gallery.css') . "'></head><body class='admin'>";
     echo $body;
-    if ($withJs) echo "<script src='/galerias/assets/admin.js'></script>";
+    if ($withJs) echo "<script src='/galerias/assets/admin.js?v=" . asset_ver('assets/admin.js') . "'></script>";
     echo "</body></html>";
     exit;
 }
@@ -170,6 +170,17 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
               ($passPlain ? " · contraseña: <b>" . h($passPlain) . "</b>" : "") . " ·
             <a target=_blank href='/galerias/" . h($gv) . "'>ver como cliente ↗</a></p></div>
         </div>
+
+        <details class='editbox'>
+          <summary>&#9881; Editar galería (título, contraseña, vigencia)</summary>
+          <form method=post class='editf2'>
+            <input type=hidden name=csrf value='$tok'><input type=hidden name=action value=edit><input type=hidden name=slug value='$gv'>
+            <label>Título<input name=title value='" . h($gm['title']) . "'></label>
+            <label>Contraseña<input name=password placeholder='dejar vacío para no cambiarla'></label>
+            <label>Vigencia (meses · 0 = sin límite)<input name=months type=number min=0 placeholder='ej. 3'></label>
+            <button class='btn small'>Guardar cambios</button>
+          </form>
+        </details>
 
         <div class='dropzone' id='dz' data-slug='$gv' data-csrf='$tok'>
           <div class='dz-inner'>

@@ -104,26 +104,29 @@
       + '¡Que las disfrutes!';
     copyText(msg);
   });
-  function done(ok) {
-    if (ok) {
-      var orig = cl.innerHTML;
-      cl.innerHTML = '✓ ¡Copiado!';
-      if (note) { note.hidden = false; note.textContent = 'Mensaje copiado — pégalo en WhatsApp o correo y envíalo al cliente.'; }
-      setTimeout(function () { cl.innerHTML = orig; }, 2200);
-    }
-  }
-  function copyText(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { fb(text); });
-    } else { fb(text); }
-  }
-  function fb(text) {
+  function showBox(msg) {
+    if (!note) { alert(msg); return; }
+    note.hidden = false;
+    note.innerHTML = "<div class='cn-status' id='cnStatus'>Copiando…</div>";
     var ta = document.createElement('textarea');
-    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.focus(); ta.select();
-    var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
-    document.body.removeChild(ta);
-    if (ok) done(true);
-    else if (note) { note.hidden = false; note.innerHTML = 'Copia esto manualmente:'; var t = document.createElement('textarea'); t.className = 'copy-manual'; t.value = text; note.appendChild(t); t.select(); }
+    ta.className = 'copy-manual'; ta.readOnly = true; ta.value = msg;
+    note.appendChild(ta); ta.focus(); ta.select();
+    note._ta = ta;
+  }
+  function status(t) { var s = document.getElementById('cnStatus'); if (s) s.textContent = t; }
+  function copyText(msg) {
+    showBox(msg); // siempre visible para copiar a mano si hace falta
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(msg).then(
+        function () { status('✓ Copiado al portapapeles — pégalo en WhatsApp o correo y envíalo al cliente.'); },
+        function () { legacy(msg); }
+      );
+    } else { legacy(msg); }
+  }
+  function legacy(msg) {
+    var ta = note && note._ta, ok = false;
+    if (ta) { ta.focus(); ta.select(); try { ok = document.execCommand('copy'); } catch (e) {} }
+    status(ok ? '✓ Copiado al portapapeles — pégalo y envíalo al cliente.'
+              : '☝ Selecciona el texto de arriba y cópialo con Ctrl/Cmd + C.');
   }
 })();
