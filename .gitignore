@@ -4,3 +4,6 @@
 galerias/data/*
 !galerias/data/.htaccess
 !galerias/data/index.php
+
+# Selección de fotos del portafolio (la escribe el panel, vive en el servidor)
+fotos-config.json
