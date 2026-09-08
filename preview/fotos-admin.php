@@ -23,13 +23,30 @@ foreach (glob($FOTOS_DIR . '/*.jpg') ?: [] as $p) $photos[] = basename($p);
 sort($photos);
 $exists = array_flip($photos);
 
-// login (reusa admin de galerías)
-if (!admin_is_setup() || !admin_authed()) {
+// login propio (verifica contra la MISMA contraseña de admin de galerías)
+if (!admin_is_setup()) {
+    echo "<!doctype html><meta charset=utf-8><link rel=stylesheet href='/galerias/assets/gallery.css'><body class='admin'><div class='center'>";
+    echo "<div class='logo'>CAT<b>CH</b></div><h1>Configura tu acceso</h1>";
+    echo "<p class='muted'>Primero crea tu contraseña de administrador en el panel de galerías; luego regresa aquí.</p>";
+    echo "<a class='btn' href='/galerias/admin.php'>Crear contraseña</a></div></body>";
+    exit;
+}
+if (!admin_authed()) {
+    $err = '';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pw']) && csrf_ok()) {
+        usleep(300000);
+        if (admin_login($_POST['pw'])) { header('Location: /preview/fotos-admin.php'); exit; }
+        $err = 'Contraseña incorrecta.';
+    }
+    $tok = csrf_token();
     echo "<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'>";
     echo "<link rel=stylesheet href='/galerias/assets/gallery.css'><body class='admin'><div class='center'>";
-    echo "<div class='logo'>CAT<b>CH</b></div><h1>Selector de fotos</h1>";
-    echo "<p class='muted'>Entra con tu contraseña de administrador (la misma de las galerías) y regresa a esta página.</p>";
-    echo "<a class='btn' href='/galerias/admin.php'>Ir a iniciar sesión</a></div></body>";
+    echo "<div class='logo'>CAT<b>CH</b><small>A FILM STUDIO</small></div><div class='eyebrow'>Portafolio de foto</div><h1>Selector de fotos</h1>";
+    echo "<p class='muted'>Entra con tu contraseña de administrador (la misma de las galerías).</p>";
+    if ($err) echo "<p class='err'>" . h($err) . "</p>";
+    echo "<form method=post class='pwform'><input type=hidden name=csrf value='$tok'>";
+    echo "<input type=password name=pw placeholder='Contraseña de admin' autofocus required>";
+    echo "<button class='btn' type=submit>Entrar</button></form></div></body>";
     exit;
 }
 
