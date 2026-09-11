@@ -1,3 +1,30 @@
+// ===== Carga de miniaturas con límite de concurrencia =====
+// Con cientos de fotos, HTTP/2 pediría todas las miniaturas a la vez y
+// saturaría el servidor (403 intermitente). Aquí solo se cargan las que están
+// cerca de la pantalla y como máximo 5 a la vez.
+(function () {
+  var imgs = Array.prototype.slice.call(document.querySelectorAll('img[data-src]'));
+  if (!imgs.length) return;
+  var MAX = 5, active = 0, queue = [];
+  function pump() { while (active < MAX && queue.length) load(queue.shift()); }
+  function load(img) {
+    if (!img.getAttribute('data-src')) return;
+    active++;
+    img.onload = img.onerror = function () { img.onload = img.onerror = null; active--; pump(); };
+    img.src = img.getAttribute('data-src');
+    img.removeAttribute('data-src');
+  }
+  function enqueue(img) { if (img.getAttribute('data-src')) { queue.push(img); pump(); } }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (e) { if (e.isIntersecting) { io.unobserve(e.target); enqueue(e.target); } });
+    }, { rootMargin: '700px 0px' });
+    imgs.forEach(function (i) { io.observe(i); });
+  } else {
+    imgs.forEach(enqueue);
+  }
+})();
+
 // ===== Cargador de fotos (drag & drop) con progreso por foto =====
 (function () {
   var dz = document.getElementById('dz');

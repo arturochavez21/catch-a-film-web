@@ -162,7 +162,7 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
         $ef = rawurlencode($f);
         $isC = ($f === $cover);
         $grid .= "<div class='pg-item" . ($isC ? ' is-cover' : '') . "' data-f='" . h($f) . "'>
-            <img loading='lazy' src='/galerias/media.php?g=$gv&s=thumb&f=$ef'>
+            <img data-src='/galerias/media.php?g=$gv&s=thumb&f=$ef' alt=''>
             " . ($isC ? "<span class='pg-badge'>&#9733; Portada</span>" : "") . "
             <div class='pg-tools'>
               <form method=post class='pg-cover'><input type=hidden name=csrf value='$tok'><input type=hidden name=action value=setcover>

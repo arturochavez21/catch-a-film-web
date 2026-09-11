@@ -48,6 +48,11 @@ if (!move_uploaded_file($tmp, "$dir/$name")) {
 }
 @chmod("$dir/$name", 0644);
 
+// Pre-genera la miniatura AHORA (una por subida, repartido en el tiempo) para
+// que al abrir la galería no se generen cientos de golpe y se sature el
+// servidor (causa del 403 intermitente en galerías grandes).
+@make_variant("$dir/$name", cache_dir($slug) . '/thumb/' . preg_replace('/\.png$/i', '.jpg', $name), THUMB_MAX, THUMB_QUALITY);
+
 // La galería cambió → invalida el zip anterior
 $m = load_gallery($slug);
 $m['count'] = count(gallery_photos($slug));
