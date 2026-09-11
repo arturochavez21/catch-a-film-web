@@ -25,6 +25,31 @@
   }
 })();
 
+// ===== Preparar miniaturas: pre-genera por lotes desde el panel =====
+(function () {
+  var btns = document.querySelectorAll('.warmBtn');
+  if (!btns.length) return;
+  Array.prototype.forEach.call(btns, function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.busy) return;
+      b.dataset.busy = '1';
+      var slug = b.dataset.slug, csrf = b.dataset.csrf;
+      b.innerHTML = 'Preparando…';
+      (function step() {
+        fetch('/galerias/warm.php?g=' + encodeURIComponent(slug), {
+          method: 'POST',
+          headers: { 'X-CSRF': csrf, 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'csrf=' + encodeURIComponent(csrf)
+        }).then(function (r) { return r.json(); }).then(function (j) {
+          if (!j || j.error) { b.innerHTML = '⚠ ' + ((j && j.error) || 'Error'); b.dataset.busy = ''; return; }
+          if (j.complete) { b.innerHTML = '✓ Miniaturas listas (' + j.total + ')'; b.classList.add('copied'); b.dataset.busy = ''; }
+          else { b.innerHTML = 'Preparando ' + j.ready + '/' + j.total + '…'; setTimeout(step, 200); }
+        }).catch(function () { b.innerHTML = '⚠ Reintentar'; b.dataset.busy = ''; });
+      })();
+    });
+  });
+})();
+
 // ===== Cargador de fotos (drag & drop) con progreso por foto =====
 (function () {
   var dz = document.getElementById('dz');

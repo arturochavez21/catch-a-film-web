@@ -262,6 +262,7 @@ foreach ($gals as $g) {
           <button type=button class='mini copyLink' data-url='" . h($link) . "' data-pass='" . h($passPlain) . "' data-title='" . h($g['title']) . "' data-exp='" . h($expData) . "'>&#128279; Copiar link</button>
           <a class='mini' href='/galerias/admin.php?g=" . h($slug) . "'>Gestionar / subir</a>
           <a class='mini' href='/galerias/" . h($slug) . "' target='_blank'>Ver</a>
+          <button type=button class='mini warmBtn' data-slug='" . h($slug) . "' data-csrf='$tok' data-total='$n'>&#9881; Preparar miniaturas</button>
           <form method=post onsubmit=\"return confirm('¿Borrar la galería y TODAS sus fotos?')\">
             <input type=hidden name=csrf value='$tok'><input type=hidden name=action value=delete><input type=hidden name=slug value='" . h($slug) . "'>
             <button class='mini danger'>Borrar</button></form>

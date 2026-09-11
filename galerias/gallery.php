@@ -89,11 +89,14 @@ $tiles = '';
 foreach ($photos as $i => $f) {
     $ef = rawurlencode($f);
     $d  = $dims[$f] ?? null;
-    $ar = ($d && $d['w'] > 0 && $d['h'] > 0) ? ($d['w'] . '/' . $d['h']) : '3/2';
+    // Solo reservo la proporción cuando conozco las dimensiones REALES; así encaja
+    // exacto y NO deforma. Si aún no las sé, no fuerzo nada: la foto se muestra a
+    // su proporción natural (sin comprimir) al cargar.
+    $arStyle = ($d && $d['w'] > 0 && $d['h'] > 0) ? " style='aspect-ratio:{$d['w']}/{$d['h']}'" : '';
     // Las primeras fotos (arriba del pliegue) cargan de inmediato; el resto, en diferido.
     $load = $i < 8 ? "fetchpriority='high'" : "loading='lazy'";
     $tiles .= "<figure class='tile' data-full='/galerias/media.php?g=$slug&s=web&f=$ef'>
-        <img $load decoding='async' style='aspect-ratio:$ar' data-src='/galerias/media.php?g=$slug&s=thumb&f=$ef' alt=''>
+        <img $load decoding='async'$arStyle data-src='/galerias/media.php?g=$slug&s=thumb&f=$ef' alt=''>
         <a class='tdl' href='/galerias/download.php?g=$slug&f=$ef' title='Descargar' download>&#8595;</a>
       </figure>";
 }
