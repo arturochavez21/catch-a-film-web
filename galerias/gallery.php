@@ -84,11 +84,16 @@ $expTxt = !empty($meta['expires'])
     ? "Disponible hasta el " . date('d/m/Y', (int)$meta['expires'])
     : '';
 
+$dims = gallery_dims($slug, $photos);
 $tiles = '';
 foreach ($photos as $i => $f) {
     $ef = rawurlencode($f);
+    $d  = $dims[$f] ?? null;
+    $ar = ($d && $d['w'] > 0 && $d['h'] > 0) ? ($d['w'] . '/' . $d['h']) : '3/2';
+    // Las primeras fotos (arriba del pliegue) cargan de inmediato; el resto, en diferido.
+    $load = $i < 8 ? "fetchpriority='high'" : "loading='lazy'";
     $tiles .= "<figure class='tile' data-full='/galerias/media.php?g=$slug&s=web&f=$ef'>
-        <img loading='lazy' src='/galerias/media.php?g=$slug&s=thumb&f=$ef' alt=''>
+        <img $load decoding='async' style='aspect-ratio:$ar' src='/galerias/media.php?g=$slug&s=thumb&f=$ef' alt=''>
         <a class='tdl' href='/galerias/download.php?g=$slug&f=$ef' title='Descargar' download>&#8595;</a>
       </figure>";
 }

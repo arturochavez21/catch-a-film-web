@@ -78,6 +78,26 @@ function is_expired($meta) {
     return !empty($meta['expires']) && time() > (int)$meta['expires'];
 }
 
+// Dimensiones (ancho/alto) de cada foto, cacheadas en un JSON.
+// Sirven para RESERVAR el espacio de cada imagen en el mosaico y evitar
+// que la galería "salte" mientras cargan las miniaturas.
+function gallery_dims($slug, $photos = null) {
+    if ($photos === null) $photos = gallery_photos($slug);
+    $file = cache_dir($slug) . '/dims.json';
+    $dims = is_file($file) ? (json_decode(@file_get_contents($file), true) ?: []) : [];
+    $changed = false;
+    foreach ($photos as $f) {
+        if (isset($dims[$f]['w'], $dims[$f]['h']) && $dims[$f]['w'] > 0 && $dims[$f]['h'] > 0) continue;
+        // Prefiere el thumb (archivo chico) para leer el header rápido; si no, el original.
+        $thumb = cache_dir($slug) . '/thumb/' . preg_replace('/\.(png)$/i', '.jpg', $f);
+        $src = is_file($thumb) ? $thumb : orig_dir($slug) . '/' . $f;
+        $info = @getimagesize($src);
+        if ($info && $info[0] > 0 && $info[1] > 0) { $dims[$f] = ['w' => (int)$info[0], 'h' => (int)$info[1]]; $changed = true; }
+    }
+    if ($changed) { @mkdir(dirname($file), 0775, true); @file_put_contents($file, json_encode($dims), LOCK_EX); }
+    return $dims;
+}
+
 // Foto de portada (la elegida por el admin, o la primera si no hay)
 function gallery_cover($slug, $meta = null) {
     $photos = gallery_photos($slug);
@@ -186,6 +206,7 @@ function make_variant($src, $dst, $maxEdge, $quality) {
             $im->setImageFormat('jpeg');
             $im->setImageCompressionQuality($quality);
             $im->setImageProperty('jpeg:sampling-factor', '4:2:0');
+            if (method_exists($im, 'setInterlaceScheme')) $im->setInterlaceScheme(Imagick::INTERLACE_PLANE); // JPEG progresivo
             $im->writeImage($dst);
             $im->clear(); $im->destroy();
             return true;
@@ -216,6 +237,7 @@ function make_variant_gd($src, $dst, $maxEdge, $quality) {
     $nh = $scale < 1 ? (int)round($h*$scale) : $h;
     $dstImg = imagecreatetruecolor($nw, $nh);
     imagecopyresampled($dstImg, $img, 0,0,0,0, $nw,$nh, $w,$h);
+    imageinterlace($dstImg, true); // JPEG progresivo: se ve completo antes
     imagejpeg($dstImg, $dst, $quality);
     imagedestroy($img); imagedestroy($dstImg);
     return true;

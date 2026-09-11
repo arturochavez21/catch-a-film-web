@@ -35,7 +35,7 @@ h1{font-family:var(--display);text-transform:uppercase;font-weight:400;font-size
 @media(max-width:720px){.masonry{column-count:2}}
 @media(max-width:420px){.masonry{column-count:1}}
 .tile{break-inside:avoid;margin:0 0 10px;position:relative;overflow:hidden;border-radius:4px;background:var(--bg2);cursor:zoom-in}
-.tile img{width:100%;display:block;transition:transform .5s,opacity .5s;opacity:.96}
+.tile img{width:100%;height:auto;display:block;transition:transform .5s,opacity .5s;opacity:.96;background:var(--bg2)}
 .tile:hover img{transform:scale(1.03);opacity:1}
 .tdl{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;background:rgba(8,9,10,.62);
   display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;opacity:0;transform:translateY(-4px);
