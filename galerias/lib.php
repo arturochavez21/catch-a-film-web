@@ -81,18 +81,27 @@ function is_expired($meta) {
 // Dimensiones (ancho/alto) de cada foto, cacheadas en un JSON.
 // Sirven para RESERVAR el espacio de cada imagen en el mosaico y evitar
 // que la galería "salte" mientras cargan las miniaturas.
+// IMPORTANTE: solo lee las MINIATURAS (archivos chicos). Nunca abre los
+// originales pesados durante el render de la página — en galerías de
+// 1-2 GB eso podía volver lentísima la petición del documento. Si aún no
+// hay miniatura, se usa una proporción por defecto y se rellena solo en la
+// siguiente visita (cuando la miniatura ya existe).
 function gallery_dims($slug, $photos = null) {
     if ($photos === null) $photos = gallery_photos($slug);
-    $file = cache_dir($slug) . '/dims.json';
-    $dims = is_file($file) ? (json_decode(@file_get_contents($file), true) ?: []) : [];
+    $file  = cache_dir($slug) . '/dims.json';
+    $dims  = is_file($file) ? (json_decode(@file_get_contents($file), true) ?: []) : [];
+    if (!is_array($dims)) $dims = [];
     $changed = false;
+    $tdir = cache_dir($slug) . '/thumb/';
     foreach ($photos as $f) {
         if (isset($dims[$f]['w'], $dims[$f]['h']) && $dims[$f]['w'] > 0 && $dims[$f]['h'] > 0) continue;
-        // Prefiere el thumb (archivo chico) para leer el header rápido; si no, el original.
-        $thumb = cache_dir($slug) . '/thumb/' . preg_replace('/\.(png)$/i', '.jpg', $f);
-        $src = is_file($thumb) ? $thumb : orig_dir($slug) . '/' . $f;
-        $info = @getimagesize($src);
-        if ($info && $info[0] > 0 && $info[1] > 0) { $dims[$f] = ['w' => (int)$info[0], 'h' => (int)$info[1]]; $changed = true; }
+        $thumb = $tdir . preg_replace('/\.(png)$/i', '.jpg', $f);
+        if (!is_file($thumb)) continue;               // sin miniatura aún: se rellenará luego
+        $info = @getimagesize($thumb);                // header de un archivo chico: barato
+        if ($info && $info[0] > 0 && $info[1] > 0) {
+            $dims[$f] = ['w' => (int)$info[0], 'h' => (int)$info[1]];
+            $changed = true;
+        }
     }
     if ($changed) { @mkdir(dirname($file), 0775, true); @file_put_contents($file, json_encode($dims), LOCK_EX); }
     return $dims;
