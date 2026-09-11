@@ -89,6 +89,57 @@
   function refreshCount() { if (countEl) countEl.textContent = '(' + grid.querySelectorAll('.pg-item:not(.up)').length + ')'; }
 })();
 
+// ===== Selección múltiple para borrar varias fotos a la vez =====
+(function () {
+  var grid = document.getElementById('pgrid');
+  var toggle = document.getElementById('selToggle');
+  if (!grid || !toggle) return;
+  var bulk = document.getElementById('pgBulk'), cnt = document.getElementById('pgSelCount'),
+      delBtn = document.getElementById('bulkDel'), cancel = document.getElementById('selCancel'),
+      form = document.getElementById('bulkDelForm');
+
+  function selected() { return Array.prototype.slice.call(grid.querySelectorAll('.pg-item.sel')); }
+  function refresh() {
+    var n = selected().length;
+    cnt.textContent = n + (n === 1 ? ' seleccionada' : ' seleccionadas');
+    delBtn.disabled = !n;
+  }
+  function setMode(on) {
+    grid.classList.toggle('selecting', on);
+    bulk.hidden = !on;
+    toggle.textContent = on ? 'Listo' : 'Seleccionar varias';
+    toggle.classList.toggle('danger', false);
+    if (!on) selected().forEach(function (t) { t.classList.remove('sel'); });
+    refresh();
+  }
+  toggle.addEventListener('click', function () { setMode(!grid.classList.contains('selecting')); });
+  cancel.addEventListener('click', function () { setMode(false); });
+
+  // en modo selección, un clic sobre la foto la marca/desmarca (bloquea los botones de la foto)
+  grid.addEventListener('click', function (e) {
+    if (!grid.classList.contains('selecting')) return;
+    var it = e.target.closest('.pg-item');
+    if (!it || it.classList.contains('up') || it.classList.contains('err')) return;
+    e.preventDefault(); e.stopPropagation();
+    it.classList.toggle('sel');
+    refresh();
+  }, true);
+
+  delBtn.addEventListener('click', function () {
+    var items = selected();
+    if (!items.length) return;
+    if (!confirm('¿Borrar ' + items.length + (items.length === 1 ? ' foto seleccionada?' : ' fotos seleccionadas?'))) return;
+    Array.prototype.slice.call(form.querySelectorAll('input[name="files[]"]')).forEach(function (i) { i.remove(); });
+    items.forEach(function (t) {
+      var f = t.dataset.f; if (!f) return;
+      var i = document.createElement('input');
+      i.type = 'hidden'; i.name = 'files[]'; i.value = f;
+      form.appendChild(i);
+    });
+    form.submit();
+  });
+})();
+
 // ===== Generar link: copiar link + contraseña al portapapeles =====
 (function () {
   var cl = document.getElementById('copyLink');

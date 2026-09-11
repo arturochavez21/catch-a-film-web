@@ -136,6 +136,19 @@ code{background:var(--bg2);padding:.1rem .4rem;border-radius:4px;font-size:.85em
 .pg-badge{position:absolute;top:6px;left:6px;z-index:2;font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:#fff;padding:.15rem .45rem;border-radius:20px;font-weight:700}
 .pg-item.is-cover{outline:2px solid var(--accent)}
 
+/* selección múltiple de fotos */
+.pg-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.2rem 0 .1rem}
+.pg-bulk{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.mini.danger{border-color:#e05a5a;color:#ff9a9a}
+.mini.danger:hover:not(:disabled){background:#e05a5a;color:#fff}
+.mini:disabled{opacity:.45;cursor:default}
+.pgrid.selecting .pg-item{cursor:pointer}
+.pgrid.selecting .pg-tools,.pgrid.selecting .pg-del{display:none}
+.pgrid.selecting .pg-item::after{content:'';position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:rgba(8,9,10,.5);box-shadow:0 1px 6px rgba(0,0,0,.5);z-index:3}
+.pgrid.selecting .pg-item.sel::after{content:'\2713';background:var(--accent);border-color:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700}
+.pgrid.selecting .pg-item.sel{outline:2px solid var(--accent)}
+.pgrid.selecting .pg-item.sel img{opacity:.7}
+
 /* botón secundario + aviso de copiado */
 .zipbar .ghost2{background:none;border:1px solid var(--line);color:var(--text)}
 .zipbar .ghost2:hover{border-color:var(--accent);box-shadow:none;transform:none}

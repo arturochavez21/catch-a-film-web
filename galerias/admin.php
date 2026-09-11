@@ -114,6 +114,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf_ok()) {
             $msg = 'Foto eliminada.';
         }
     }
+    elseif ($action === 'delphotos' && valid_slug($_POST['slug'] ?? '')) {
+        $slug = $_POST['slug']; $goto = $slug;
+        $files = $_POST['files'] ?? [];
+        if (!is_array($files)) $files = [];
+        $n = 0;
+        foreach ($files as $raw) {
+            $f = basename((string)$raw);
+            if (preg_match('/\.(jpe?g|png)$/i', $f)) {
+                @unlink(orig_dir($slug).'/'.$f);
+                @unlink(cache_dir($slug).'/thumb/'.preg_replace('/\.(png)$/i','.jpg',$f));
+                @unlink(cache_dir($slug).'/web/'.preg_replace('/\.(png)$/i','.jpg',$f));
+                $n++;
+            }
+        }
+        if ($n) {
+            if (is_file(zip_path($slug))) @unlink(zip_path($slug));
+            $msg = $n . ($n === 1 ? ' foto eliminada.' : ' fotos eliminadas.');
+        } else { $err = 'No seleccionaste ninguna foto.'; }
+    }
     elseif ($action === 'setcover' && valid_slug($_POST['slug'] ?? '')) {
         $slug = $_POST['slug']; $goto = $slug; $f = basename($_POST['file'] ?? '');
         $m = load_gallery($slug);
@@ -203,6 +222,15 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
 
         <h2>Fotos <span class='muted' id='pgCount'>(" . count($photos) . ")</span></h2>
         <p class='muted small grid-hint'>En cada foto: <b>&#9733;</b> la hace <b>portada</b> (la que ve el cliente al entrar) · <b>&times;</b> la borra.</p>
+        <div class='pg-actions'>
+          <button type=button class='mini' id='selToggle'>Seleccionar varias</button>
+          <div class='pg-bulk' id='pgBulk' hidden>
+            <span class='muted small' id='pgSelCount'>0 seleccionadas</span>
+            <button type=button class='mini danger' id='bulkDel' disabled>Borrar seleccionadas</button>
+            <button type=button class='mini' id='selCancel'>Cancelar</button>
+            <form method=post id='bulkDelForm' hidden><input type=hidden name=csrf value='$tok'><input type=hidden name=action value=delphotos><input type=hidden name=slug value='$gv'></form>
+          </div>
+        </div>
         <div class='pgrid' id='pgrid'>$grid</div>
         <p class='muted small' id='pgEmpty'" . ($photos ? " hidden" : "") . ">Aún no hay fotos. Arrastra algunas arriba para empezar.</p>
      </div>", 'Galería: ' . ($gm['title'] ?? ''), true);
