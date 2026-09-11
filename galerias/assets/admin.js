@@ -141,22 +141,36 @@
 })();
 
 // ===== Generar link: copiar link + contraseña al portapapeles =====
+// Funciona con VARIOS botones a la vez: el de dentro de cada galería y los
+// de cada fila del panel (clase .copyLink). Cada botón da su propio feedback.
 (function () {
-  var cl = document.getElementById('copyLink');
-  if (!cl) return;
+  var btns = document.querySelectorAll('.copyLink');
+  if (!btns.length) return;
   var note = document.getElementById('copiedNote');
-  cl.addEventListener('click', function () {
-    var url = cl.dataset.url, pass = cl.dataset.pass, title = cl.dataset.title, exp = cl.dataset.exp;
-    var msg = 'Hola 👋 Aquí está tu galería de fotos de Catch a Film Studio:\n\n'
-      + '📸 ' + title + '\n'
-      + '🔗 ' + url + '\n'
-      + (pass ? '🔒 Contraseña: ' + pass + '\n' : '')
-      + (exp ? '\nDisponible hasta el ' + exp + '.\n' : '\n')
-      + '¡Que las disfrutes!';
-    copyText(msg);
+
+  Array.prototype.forEach.call(btns, function (cl) {
+    cl.addEventListener('click', function () {
+      var url = cl.dataset.url, pass = cl.dataset.pass, title = cl.dataset.title, exp = cl.dataset.exp;
+      var msg = 'Hola 👋 Aquí está tu galería de fotos de Catch a Film Studio:\n\n'
+        + '📸 ' + title + '\n'
+        + '🔗 ' + url + '\n'
+        + (pass ? '🔒 Contraseña: ' + pass + '\n' : '')
+        + (exp ? '\nDisponible hasta el ' + exp + '.\n' : '\n')
+        + '¡Que las disfrutes!';
+      copyText(msg, cl);
+    });
   });
+
+  function flash(btn) {
+    if (!btn) return;
+    if (btn._label == null) btn._label = btn.innerHTML;
+    btn.innerHTML = '✓ Copiado';
+    btn.classList.add('copied');
+    clearTimeout(btn._t);
+    btn._t = setTimeout(function () { btn.innerHTML = btn._label; btn.classList.remove('copied'); }, 1800);
+  }
   function showBox(msg) {
-    if (!note) { alert(msg); return; }
+    if (!note) return;
     note.hidden = false;
     note.innerHTML = "<div class='cn-status' id='cnStatus'>Copiando…</div>";
     var ta = document.createElement('textarea');
@@ -165,19 +179,28 @@
     note._ta = ta;
   }
   function status(t) { var s = document.getElementById('cnStatus'); if (s) s.textContent = t; }
-  function copyText(msg) {
-    showBox(msg); // siempre visible para copiar a mano si hace falta
+  function copyText(msg, btn) {
+    showBox(msg); // si hay caja, queda visible para copiar a mano si hace falta
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(msg).then(
-        function () { status('✓ Copiado al portapapeles — pégalo en WhatsApp o correo y envíalo al cliente.'); },
-        function () { legacy(msg); }
+        function () { flash(btn); status('✓ Copiado al portapapeles — pégalo en WhatsApp o correo y envíalo al cliente.'); },
+        function () { legacy(msg, btn); }
       );
-    } else { legacy(msg); }
+    } else { legacy(msg, btn); }
   }
-  function legacy(msg) {
-    var ta = note && note._ta, ok = false;
+  function legacy(msg, btn) {
+    var ok = false, ta = note && note._ta;
     if (ta) { ta.focus(); ta.select(); try { ok = document.execCommand('copy'); } catch (e) {} }
+    else {
+      var tmp = document.createElement('textarea');
+      tmp.value = msg; tmp.style.position = 'fixed'; tmp.style.top = '-1000px'; tmp.style.opacity = '0';
+      document.body.appendChild(tmp); tmp.focus(); tmp.select();
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(tmp);
+    }
+    if (ok) flash(btn);
     status(ok ? '✓ Copiado al portapapeles — pégalo y envíalo al cliente.'
               : '☝ Selecciona el texto de arriba y cópialo con Ctrl/Cmd + C.');
+    if (!ok && !note) alert('Copia este mensaje:\n\n' + msg);
   }
 })();

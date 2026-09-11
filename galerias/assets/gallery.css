@@ -74,8 +74,11 @@ body.admin{padding:0}
 .pill.ok{background:rgba(60,180,120,.16);color:#7fe0b0}.pill.warn{background:rgba(220,180,60,.16);color:#e6cf87}.pill.bad{background:rgba(220,80,90,.16);color:#ffb0b0}
 .acts{display:flex;flex-wrap:wrap;gap:.4rem;align-items:flex-start}
 .acts form{margin:0}
-.mini{padding:.4rem .7rem;border-radius:6px;border:1px solid var(--line);background:var(--bg2);color:var(--text);font-size:.76rem;cursor:pointer}
+.mini{padding:.4rem .7rem;border-radius:6px;border:1px solid var(--line);background:var(--bg2);color:var(--text);font-size:.76rem;cursor:pointer;white-space:nowrap}
 .mini:hover{border-color:var(--accent)}.mini.danger:hover{border-color:#e05a5a;color:#ff9a9a}
+.mini.copyLink{border-color:var(--accent);color:#fff}
+.mini.copyLink:hover{background:var(--accent)}
+.mini.copied,.btn.copied{border-color:#7fe0b0;color:#7fe0b0;background:rgba(60,180,120,.14)}
 details.editf, .editf{display:inline}
 .editf{display:flex;flex-direction:column;gap:.4rem;margin-top:.5rem}
 .editf input{padding:.45rem .6rem;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:.8rem}

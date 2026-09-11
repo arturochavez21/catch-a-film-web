@@ -211,7 +211,7 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
         </div>
 
         <div class='zipbar'>
-          <button class='btn small' id='copyLink' data-url='" . h($link) . "' data-pass='" . h($passPlain) . "' data-title='" . h($gm['title']) . "' data-exp='" . h($expData) . "'>&#128279; Generar link (copiar link + contraseña)</button>
+          <button type=button class='btn small copyLink' id='copyLink' data-url='" . h($link) . "' data-pass='" . h($passPlain) . "' data-title='" . h($gm['title']) . "' data-exp='" . h($expData) . "'>&#128279; Generar link (copiar link + contraseña)</button>
           <form method=post onsubmit=\"return confirm('¿Preparar la descarga completa (zip)? Puede tardar en galerías grandes.')\">
             <input type=hidden name=csrf value='$tok'><input type=hidden name=action value=zip><input type=hidden name=slug value='$gv'>
             <button class='btn small ghost2'>&#8595; Preparar descarga (zip)</button>
@@ -250,12 +250,16 @@ foreach ($gals as $g) {
     $exp = !empty($g['expires']) ? date('d/m/Y', (int)$g['expires']) : 'sin límite';
     $st = is_expired($g) ? "<span class='pill bad'>expirada</span>" : "<span class='pill ok'>activa</span>";
     $zipst = is_file(zip_path($slug)) ? "<span class='pill ok'>zip</span>" : "<span class='pill warn'>sin zip</span>";
+    $passPlain = $g['pass_plain'] ?? '';
+    $link = SITE_URL . '/galerias/' . $slug;
+    $expData = !empty($g['expires']) ? date('d/m/Y', (int)$g['expires']) : '';
     $rows .= "<tr>
         <td><div class='gcell'>$thumb<div><a href='/galerias/admin.php?g=" . h($slug) . "'><b>" . h($g['title']) . "</b></a><br><span class='muted small'>/galerias/" . h($slug) . "</span></div></div></td>
         <td>$n fotos<br><span class='muted small'>" . human_bytes($size) . "</span></td>
         <td>$st<br><span class='muted small'>hasta $exp</span></td>
         <td>$zipst</td>
         <td class='acts'>
+          <button type=button class='mini copyLink' data-url='" . h($link) . "' data-pass='" . h($passPlain) . "' data-title='" . h($g['title']) . "' data-exp='" . h($expData) . "'>&#128279; Copiar link</button>
           <a class='mini' href='/galerias/admin.php?g=" . h($slug) . "'>Gestionar / subir</a>
           <a class='mini' href='/galerias/" . h($slug) . "' target='_blank'>Ver</a>
           <form method=post onsubmit=\"return confirm('¿Borrar la galería y TODAS sus fotos?')\">
@@ -272,6 +276,7 @@ admin_page("<div class='admin-wrap'>
      <form method=post><input type=hidden name=csrf value='$tok'><input type=hidden name=action value=logout><button class='mini'>Salir</button></form>
    </header>
    " . ($msg ? "<div class='note ok'>".h($msg)."</div>" : "") . ($err ? "<div class='note bad'>".h($err)."</div>" : "") . "
+   <div class='copied-note' id='copiedNote' hidden></div>
    <table class='gtable'><thead><tr><th>Galería</th><th>Fotos</th><th>Estado</th><th>Descarga</th><th></th></tr></thead><tbody>$rows</tbody></table>
    <h2>Nueva galería</h2>
    <form method=post class='newf'>
@@ -282,4 +287,4 @@ admin_page("<div class='admin-wrap'>
      <button class='btn' type=submit>Crear y subir fotos</button>
    </form>
    <p class='muted small'>Motor de imagen: $engine · Al crear una galería entrarás directo a subir las fotos (arrastrar y soltar).</p>
- </div>", 'Panel de galerías');
+ </div>", 'Panel de galerías', true);
