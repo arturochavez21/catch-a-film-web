@@ -1,0 +1,33 @@
+{
+  "categorias": [
+    { "id": "camaras",    "nombre": "Cámaras",    "icono": "camara",        "desc": "Cuerpos Sony full frame, drone y cámaras de acción listas para grabar." },
+    { "id": "lentes",     "nombre": "Lentes",     "icono": "lente",         "desc": "Zooms y fijos para cubrir desde gran angular hasta retrato." },
+    { "id": "audio",      "nombre": "Audio",      "icono": "audio",         "desc": "Micrófonos inalámbricos y grabadora para un sonido limpio en set." },
+    { "id": "accesorios", "nombre": "Accesorios", "icono": "estabilizador", "desc": "Estabilizadores, tripié, teleprompter y lo que completa tu set." }
+  ],
+  "productos": [
+    { "id": "sony-a7-v",            "cat": "camaras",    "nombre": "Sony A7 V",                        "detalle": "Incluye 2 pilas, SD 128 GB y cargador", "precio": 1900, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "sony-a7-iv",           "cat": "camaras",    "nombre": "Sony A7 IV",                       "detalle": "Incluye 2 pilas, SD 128 GB y cargador", "precio": 1500, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "dji-mini-4-pro-combo", "cat": "camaras",    "nombre": "DJI Mini 4 Pro Combo",             "detalle": "Incluye 3 pilas, SD 128 GB y cargador", "precio": 1500, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "dji-osmo-pocket-3",    "cat": "camaras",    "nombre": "DJI Osmo Pocket 3",                "detalle": "Incluye SD 128 GB",                     "precio": 400,  "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "gopro-hero-12",        "cat": "camaras",    "nombre": "GoPro Hero 12",                    "detalle": "Incluye 2 pilas, SD 128 GB y cargador", "precio": 400,  "unidades": 1, "disponible": true, "foto": "" },
+
+    { "id": "sigma-24-70-art-ii",   "cat": "lentes",     "nombre": "Sigma 24-70mm f/2.8 Art II",       "detalle": "", "precio": 500, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "sony-24-105-f4",       "cat": "lentes",     "nombre": "Sony 24-105mm f/4",                "detalle": "", "precio": 400, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "sigma-14-24-art",      "cat": "lentes",     "nombre": "Sigma 14-24mm f/2.8 Art",          "detalle": "", "precio": 400, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "sony-50-f1-8",         "cat": "lentes",     "nombre": "Sony 50mm f/1.8",                  "detalle": "", "precio": 250, "unidades": 1, "disponible": true, "foto": "" },
+
+    { "id": "zoom-h6",              "cat": "audio",      "nombre": "Zoom H6",                          "detalle": "Incluye SD 64 GB",  "precio": 450, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "dji-mic-3",            "cat": "audio",      "nombre": "DJI Mic 3",                        "detalle": "",                  "precio": 400, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "dji-mic-2",            "cat": "audio",      "nombre": "DJI Mic 2",                        "detalle": "Incluye lavaliers", "precio": 350, "unidades": 1, "disponible": true, "foto": "" },
+
+    { "id": "dji-rs4-pro-combo",    "cat": "accesorios", "nombre": "DJI RS4 Pro Combo",                "detalle": "", "precio": 650, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "dji-rs5-combo",        "cat": "accesorios", "nombre": "DJI RS5 Combo",                    "detalle": "", "precio": 500, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "filtro-nd-nisi",       "cat": "accesorios", "nombre": "Filtro ND Nisi",                   "detalle": "Variable de 1 a 5 stops", "precio": 450, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "teleprompter",         "cat": "accesorios", "nombre": "Teleprompter",                     "detalle": "Incluye control remoto",  "precio": 400, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "tripie-ulanzi-tt09",   "cat": "accesorios", "nombre": "Tripié Ulanzi TT09",               "detalle": "Cabeza fluida",           "precio": 350, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "pila-infinita-sony",   "cat": "accesorios", "nombre": "Pila infinita Sony (AC Adapter)",  "detalle": "Dummy battery FZ100 · Se conecta a corriente · Batería ilimitada para grabaciones largas", "precio": 150, "unidades": 1, "disponible": true, "foto": "" },
+    { "id": "lexar-silver-pro-128", "cat": "accesorios", "nombre": "Lexar Silver Pro SD 128GB",        "detalle": "V60 · 280 MB/s lectura · 120 MB/s escritura · SDXC UHS-II", "precio": 150, "unidades": 1, "disponible": true, "foto": "" }
+  ],
+  "actualizado": 0
+}

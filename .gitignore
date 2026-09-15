@@ -7,3 +7,10 @@ galerias/data/*
 
 # Selección de fotos del portafolio (la escribe el panel, vive en el servidor)
 fotos-config.json
+
+# Renta de equipo: el catálogo editado, las métricas y las fotos subidas viven en el servidor
+renta/data/*
+!renta/data/.htaccess
+!renta/data/index.php
+renta/fotos/*
+!renta/fotos/.htaccess

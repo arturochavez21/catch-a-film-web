@@ -1,0 +1,12 @@
+# Fotos de producto subidas desde el panel
+Options -Indexes
+
+# Aquí solo viven imágenes: nada ejecutable
+<FilesMatch "\.(php|phtml|phar|pl|py|cgi|sh)$">
+  Require all denied
+</FilesMatch>
+
+# Cada foto tiene nombre único (cambia al reemplazarla): caché de un año
+<FilesMatch "\.(jpg|png)$">
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>

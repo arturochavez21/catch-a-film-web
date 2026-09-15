@@ -1,0 +1,11 @@
+# Renta de equipo — seguridad básica
+Options -Indexes
+DirectoryIndex index.php
+
+# Nunca servir datos ni el núcleo por HTTP
+<FilesMatch "\.(json|jsonl|md|tmp)$">
+  Require all denied
+</FilesMatch>
+<Files "lib.php">
+  Require all denied
+</Files>
