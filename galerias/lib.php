@@ -119,7 +119,10 @@ function gallery_cover($slug, $meta = null) {
 // --- Autenticación de cliente por galería ---
 function client_authed($slug) {
     boot_session();
-    return !empty($_SESSION['gal'][$slug]);
+    if (!empty($_SESSION['gal'][$slug])) return true;
+    // Galería sin contraseña = pública: se ve directo con el link, sin login.
+    $m = load_gallery($slug);
+    return ($m && empty($m['pass_hash']));
 }
 function client_login($slug, $password) {
     $m = load_gallery($slug);

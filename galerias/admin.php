@@ -69,13 +69,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf_ok()) {
         $title = trim($_POST['title'] ?? '');
         $pw    = $_POST['password'] ?? '';
         $months= max(0, (int)($_POST['months'] ?? DEFAULT_EXPIRY_MONTHS));
-        if ($title === '' || strlen($pw) < 4) { $err = 'Pon un título y una contraseña (mín. 4).'; }
+        if ($title === '') { $err = 'Pon un título.'; }
+        elseif ($pw !== '' && strlen($pw) < 4) { $err = 'La contraseña debe tener al menos 4 caracteres (o déjala vacía para una galería sin contraseña).'; }
         else {
             $slug = slugify($title); $base = $slug; $n = 2;
             while (load_gallery($slug)) { $slug = $base . '-' . $n; $n++; }
             @mkdir(orig_dir($slug), 0775, true);
-            save_gallery($slug, ['title'=>$title,'pass_hash'=>password_hash($pw,PASSWORD_DEFAULT),'pass_plain'=>$pw,
-                'created'=>time(),'expires'=>$months>0?strtotime("+$months months"):0]);
+            // Contraseña opcional: vacía = galería pública (sin login).
+            $data = ['title'=>$title, 'created'=>time(), 'expires'=>$months>0?strtotime("+$months months"):0];
+            if ($pw !== '') { $data['pass_hash'] = password_hash($pw, PASSWORD_DEFAULT); $data['pass_plain'] = $pw; }
+            save_gallery($slug, $data);
             header('Location: /galerias/admin.php?g=' . rawurlencode($slug)); exit; // va directo a subir fotos
         }
     }
@@ -99,7 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf_ok()) {
         $slug = $_POST['slug']; $goto = $slug; $m = load_gallery($slug);
         if ($m) {
             if (trim($_POST['title'] ?? '') !== '') $m['title'] = trim($_POST['title']);
-            if (($_POST['password'] ?? '') !== '') { $m['pass_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT); $m['pass_plain'] = $_POST['password']; }
+            if (!empty($_POST['nopass'])) { unset($m['pass_hash'], $m['pass_plain']); }              // hacerla pública
+            elseif (($_POST['password'] ?? '') !== '') { $m['pass_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT); $m['pass_plain'] = $_POST['password']; }
             if (($_POST['months'] ?? '') !== '')     $m['expires'] = (int)$_POST['months']>0 ? strtotime('+'.(int)$_POST['months'].' months') : 0;
             save_gallery($slug, $m); $msg = 'Galería actualizada.';
         }
@@ -186,7 +190,7 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
         <div class='gv-head'>
           <div><div class='eyebrow'>Galería</div><h1>" . h($gm['title']) . "</h1>
             <p class='muted small'>" . count($photos) . " fotos · " . human_bytes($size) . " · disponible hasta $exp" .
-              ($passPlain ? " · contraseña: <b>" . h($passPlain) . "</b>" : "") . " ·
+              ($passPlain ? " · contraseña: <b>" . h($passPlain) . "</b>" : " · <b>sin contraseña (pública)</b>") . " ·
             <a target=_blank href='/galerias/" . h($gv) . "'>ver como cliente ↗</a></p></div>
         </div>
 
@@ -196,6 +200,7 @@ if (valid_slug($gv) && ($gm = load_gallery($gv))) {
             <input type=hidden name=csrf value='$tok'><input type=hidden name=action value=edit><input type=hidden name=slug value='$gv'>
             <label>Título<input name=title value='" . h($gm['title']) . "'></label>
             <label>Contraseña<input name=password placeholder='dejar vacío para no cambiarla'></label>
+            <label class='chk'><input type=checkbox name=nopass value=1> Sin contraseña (galería pública)</label>
             <label>Vigencia (meses · 0 = sin límite)<input name=months type=number min=0 placeholder='ej. 3'></label>
             <button class='btn small'>Guardar cambios</button>
           </form>
@@ -249,6 +254,7 @@ foreach ($gals as $g) {
         : "<span class='gthumb empty'></span>";
     $exp = !empty($g['expires']) ? date('d/m/Y', (int)$g['expires']) : 'sin límite';
     $st = is_expired($g) ? "<span class='pill bad'>expirada</span>" : "<span class='pill ok'>activa</span>";
+    $st .= empty($g['pass_hash']) ? " <span class='pill warn'>pública</span>" : " <span class='pill'>con contraseña</span>";
     $zipst = is_file(zip_path($slug)) ? "<span class='pill ok'>zip</span>" : "<span class='pill warn'>sin zip</span>";
     $passPlain = $g['pass_plain'] ?? '';
     $link = SITE_URL . '/galerias/' . $slug;
@@ -283,9 +289,9 @@ admin_page("<div class='admin-wrap'>
    <form method=post class='newf'>
      <input type=hidden name=csrf value='$tok'><input type=hidden name=action value=create>
      <input name=title placeholder='Título (ej. Boda Ana & David)' required>
-     <input name=password placeholder='Contraseña para el cliente' required>
+     <input name=password placeholder='Contraseña (opcional — vacío = sin contraseña)'>
      <input name=months type=number min=0 value='" . DEFAULT_EXPIRY_MONTHS . "' title='Meses disponible (0 = sin límite)'>
      <button class='btn' type=submit>Crear y subir fotos</button>
    </form>
-   <p class='muted small'>Motor de imagen: $engine · Al crear una galería entrarás directo a subir las fotos (arrastrar y soltar).</p>
+   <p class='muted small'>Motor de imagen: $engine · La contraseña es <b>opcional</b>: si la dejas vacía, la galería será <b>pública</b> (el cliente entra directo con el link). Al crear entrarás directo a subir las fotos.</p>
  </div>", 'Panel de galerías', true);

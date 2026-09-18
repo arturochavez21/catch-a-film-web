@@ -70,7 +70,7 @@ body.admin{padding:0}
 .gtable{width:100%;border-collapse:collapse;font-size:.9rem}
 .gtable th{text-align:left;color:var(--muted);font-weight:600;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;padding:.6rem .7rem;border-bottom:1px solid var(--line)}
 .gtable td{padding:.9rem .7rem;border-bottom:1px solid var(--line);vertical-align:top}
-.pill{display:inline-block;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .55rem;border-radius:20px}
+.pill{display:inline-block;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .55rem;border-radius:20px;background:rgba(255,255,255,.07);color:var(--muted)}
 .pill.ok{background:rgba(60,180,120,.16);color:#7fe0b0}.pill.warn{background:rgba(220,180,60,.16);color:#e6cf87}.pill.bad{background:rgba(220,80,90,.16);color:#ffb0b0}
 .acts{display:flex;flex-wrap:wrap;gap:.4rem;align-items:flex-start}
 .acts form{margin:0}
@@ -167,6 +167,8 @@ code{background:var(--bg2);padding:.1rem .4rem;border-radius:4px;font-size:.85em
 .editf2 input{padding:.6rem .8rem;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:.9rem;min-width:200px}
 .editf2 input[type=number]{min-width:120px}
 .editf2 .btn{margin-top:0}
+.editf2 label.chk{flex-direction:row;align-items:center;gap:.5rem;font-size:.8rem;color:var(--text);text-transform:none;letter-spacing:0}
+.editf2 label.chk input{min-width:0;width:auto}
 .cn-status{color:#7fe0b0;font-size:.88rem;margin-bottom:.4rem}
 
 /* miniatura en la lista de galerías */
