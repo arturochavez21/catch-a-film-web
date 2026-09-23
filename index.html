@@ -245,6 +245,26 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
 .pmosaic figure{break-inside:avoid;margin:0 0 10px;border-radius:5px;overflow:hidden;cursor:zoom-in;background:var(--bg2)}
 .pmosaic img{width:100%;display:block;opacity:.92;transition:transform .5s,opacity .5s}
 .pmosaic figure:hover img{transform:scale(1.05);opacity:1}
+/* vista de portafolio en video */
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:1300px;margin:0 auto;padding:1.5rem clamp(1.25rem,4vw,2.75rem) 0}
+@media(max-width:900px){.vgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.vgrid{grid-template-columns:1fr}}
+.vtile{position:relative;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:var(--bg2);border:1px solid var(--line);cursor:pointer;padding:0;margin:0;width:100%;text-align:left;font:inherit;color:inherit;display:block}
+.vtile.feat{grid-column:1/-1;aspect-ratio:21/9}
+@media(max-width:600px){.vtile.feat{aspect-ratio:16/9}}
+.vtile .vposter,.vtile .vprev{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+.vtile .vprev{opacity:0;transition:opacity .4s}
+.vtile.playing .vprev{opacity:1}
+.vtile:hover .vposter,.vtile:hover .vprev{transform:scale(1.045)}
+.vtile .vscrim{position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(11,8,9,.9),rgba(11,8,9,.12) 55%,transparent)}
+.vtile .vmeta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:clamp(.9rem,2vw,1.4rem)}
+.vtile .vc{font-size:.62rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:.35rem}
+.vtile .vmeta h3{font-family:var(--display);font-weight:400;text-transform:uppercase;line-height:.95;letter-spacing:.015em;font-size:clamp(1.1rem,2.2vw,1.8rem);margin:0}
+.vtile.feat .vmeta h3{font-size:clamp(1.5rem,3.6vw,2.9rem)}
+.vtile .vcli{font-size:.72rem;color:var(--muted);letter-spacing:.04em;margin-top:.25rem}
+.vtile .vplay{position:absolute;top:clamp(.7rem,1.6vw,1.1rem);right:clamp(.7rem,1.6vw,1.1rem);z-index:3;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(11,8,9,.5);border:1px solid rgba(236,231,234,.3);backdrop-filter:blur(6px);color:#fff;transition:background .25s,transform .25s,border-color .25s}
+.vtile:hover .vplay{background:var(--accent);border-color:transparent;transform:scale(1.08)}
+.vtile .vplay svg{width:18px;height:18px;fill:currentColor;margin-left:2px}
 /* lightbox de fotos */
 .plb{position:fixed;inset:0;z-index:320;background:rgba(6,5,6,.96);display:none;align-items:center;justify-content:center;padding:3vw}
 .plb.open{display:flex}
@@ -355,7 +375,7 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
       <a class="wcard" data-cursor data-key="wahl"><video class="wvid" muted loop playsinline preload="none" poster="/videos/lite-poster-wahl.jpg" data-src="/videos/lite-wahl.mp4"></video><span class="scrim"></span><span class="idx">04</span><div class="arrow">↗</div><div class="wmeta"><div class="c">Negocios comerciales</div><h3>Catch × WAHL</h3></div></a>
       <a class="wcard" data-cursor data-key="realme"><video class="wvid" muted loop playsinline preload="none" poster="/videos/lite-poster-realme.jpg" data-src="/videos/lite-realme.mp4"></video><span class="scrim"></span><span class="idx">05</span><div class="arrow">↗</div><div class="wmeta"><div class="c">Negocios comerciales</div><h3>Catch × Realme</h3></div></a>
       <a class="wcard" data-cursor data-key="hycore"><video class="wvid" muted loop playsinline preload="none" poster="/videos/lite-poster-hycore.jpg" data-src="/videos/lite-hycore.mp4"></video><span class="scrim"></span><span class="idx">06</span><div class="arrow">↗</div><div class="wmeta"><div class="c">Eventos</div><h3>Catch × HyCore</h3></div></a>
-      <a class="wcard end" data-cursor data-magnetic><div><div class="big grad">Ver todo<br>el portafolio</div><div class="c" style="margin-top:.8rem">→</div></div></a>
+      <a class="wcard end" href="#portafolio" data-cursor data-magnetic><div><div class="big grad">Ver todo<br>el portafolio</div><div class="c" style="margin-top:.8rem">→</div></div></a>
     </div>
   </div>
 </section>
@@ -414,6 +434,15 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
 </main>
 <div class="vlb" id="vlb"><button class="vlb-close" id="vlbClose" aria-label="Cerrar">&times;</button><video id="vlbVideo" controls playsinline></video></div>
 
+<div id="videoView" class="pview">
+  <div class="wrap pv-intro">
+    <button id="vvBack" class="pv-back">← Volver al inicio</button>
+    <span class="eyebrow">Portafolio</span><h2>Proyectos en <span class="grad">video</span></h2>
+    <p class="lead">Una selección de nuestro trabajo audiovisual. Filtra por categoría y da clic en cualquier proyecto para verlo completo.</p>
+    <div class="pfilters2" id="vfilters"><button class="pfilter2 active" data-cat="all">Todos</button><button class="pfilter2" data-cat="eventos">Eventos</button><button class="pfilter2" data-cat="negocios">Negocios comerciales</button><button class="pfilter2" data-cat="corporativo">Corporativo</button><button class="pfilter2" data-cat="conceptuales">Conceptuales</button></div>
+  </div>
+  <div class="vgrid" id="vgrid"></div>
+</div>
 <div id="photoView" class="pview">
   <div class="wrap pv-intro">
     <button id="pvBack" class="pv-back">← Volver al inicio</button>
@@ -504,7 +533,7 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
   }
 
   // ---- videos: lightbox + previews del trabajo ----
-  var VIDEOS={reel:'/videos/demo-reel.mp4',sipnav:'/videos/catch-sipnav.mp4',truemakeup:'/videos/catch-truemakeup.mp4',wahl:'/videos/catch-wahl.mp4',souldance:'/videos/catch-souldance.mp4',realme:'/videos/catch-realme.mp4',hycore:'/videos/catch-hycore.mp4'};
+  var VIDEOS={reel:'/videos/demo-reel.mp4',sipnav:'/videos/catch-sipnav.mp4',truemakeup:'/videos/catch-truemakeup.mp4',wahl:'/videos/catch-wahl.mp4',souldance:'/videos/catch-souldance.mp4',realme:'/videos/catch-realme.mp4',hycore:'/videos/catch-hycore.mp4',corporativo:'/videos/catch-corporativo.mp4',mds:'/videos/catch-mds.mp4'};
   var vlb=document.getElementById('vlb'), vlbv=document.getElementById('vlbVideo'), vlbC=document.getElementById('vlbClose');
   function openLB(key){ if(!VIDEOS[key])return; vlbv.src=VIDEOS[key]; vlb.classList.add('open'); document.body.style.overflow='hidden'; vlbv.play().catch(function(){}); }
   function closeLB(){ vlb.classList.remove('open'); document.body.style.overflow=''; try{vlbv.pause();}catch(e){} vlbv.removeAttribute('src'); vlbv.load(); }
@@ -518,11 +547,61 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
     new IntersectionObserver(function(en){ en.forEach(function(x){ wvids.forEach(function(v){ if(x.isIntersecting){ if(!v.getAttribute('src'))v.setAttribute('src',v.getAttribute('data-src')); v.play().catch(function(){}); } else { try{v.pause();}catch(e){} } }); }); },{threshold:.12}).observe(document.getElementById('work'));
   }
 
-  // ---- router de vistas (home / fotografía) ----
-  var homeMain=document.querySelector('main'), homeFoot=document.querySelector('footer'), photoView=document.getElementById('photoView');
-  function route(){ var ph=(location.hash==='#fotografia'); if(photoView)photoView.classList.toggle('active',ph); if(homeMain)homeMain.style.display=ph?'none':''; if(homeFoot)homeFoot.style.display=ph?'none':''; if(ph)window.scrollTo(0,0); }
-  window.addEventListener('hashchange',route); route();
+  // ---- router de vistas (home / fotografía / portafolio) ----
+  var homeMain=document.querySelector('main'), homeFoot=document.querySelector('footer'),
+      photoView=document.getElementById('photoView'), videoView=document.getElementById('videoView');
+  function route(){
+    var h=location.hash, ph=(h==='#fotografia'), pv=(h==='#portafolio'), hide=ph||pv;
+    if(photoView)photoView.classList.toggle('active',ph);
+    if(videoView)videoView.classList.toggle('active',pv);
+    if(homeMain)homeMain.style.display=hide?'none':'';
+    if(homeFoot)homeFoot.style.display=hide?'none':'';
+    if(pv)buildWorks();
+    if(hide)window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',route);
   var pvBack=document.getElementById('pvBack'); if(pvBack)pvBack.addEventListener('click',function(){ history.replaceState('','',location.pathname+location.search); route(); window.scrollTo(0,0); });
+  var vvBack=document.getElementById('vvBack'); if(vvBack)vvBack.addEventListener('click',function(){ history.replaceState('','',location.pathname+location.search); route(); window.scrollTo(0,0); });
+
+  // ---- portafolio en video: se arma al entrar a #portafolio ----
+  var WORKS=[
+    {key:'reel',cat:'Demo Reel',f:'all',t:'Demo Reel',cli:'Selección 2026',poster:'/videos/lite-poster-reel.jpg',prev:'/videos/lite-reel.mp4',feat:true},
+    {key:'sipnav',cat:'Corporativo',f:'corporativo',t:'Catch × Sipnav',cli:'SIPNAV',poster:'/videos/lite-poster-sipnav.jpg',prev:'/videos/lite-sipnav.mp4'},
+    {key:'truemakeup',cat:'Eventos',f:'eventos',t:'Catch × Truemakeup',cli:'True Makeup',poster:'/videos/lite-poster-truemakeup.jpg',prev:'/videos/lite-truemakeup.mp4'},
+    {key:'souldance',cat:'Conceptuales',f:'conceptuales',t:'Catch × Soul Dance',cli:'Soul Dance',poster:'/videos/poster-souldance.jpg',prev:'/videos/prev-souldance.mp4'},
+    {key:'wahl',cat:'Negocios comerciales',f:'negocios',t:'Catch × WAHL',cli:'WAHL Professional',poster:'/videos/lite-poster-wahl.jpg',prev:'/videos/lite-wahl.mp4'},
+    {key:'realme',cat:'Negocios comerciales',f:'negocios',t:'Catch × Realme',cli:'realme',poster:'/videos/lite-poster-realme.jpg',prev:'/videos/lite-realme.mp4'},
+    {key:'hycore',cat:'Eventos',f:'eventos',t:'Catch × HyCore',cli:'HYCORE',poster:'/videos/lite-poster-hycore.jpg',prev:'/videos/lite-hycore.mp4'},
+    {key:'corporativo',cat:'Corporativo',f:'corporativo',t:'Reel Corporativo',cli:'Selección de trabajos',poster:'/videos/lite-poster-corporativo.jpg',prev:'/videos/lite-corporativo.mp4'},
+    {key:'mds',cat:'Eventos',f:'eventos',t:'Catch × MDS',cli:'MDS',poster:'/videos/lite-poster-mds.jpg',prev:'/videos/lite-mds.mp4'}
+  ];
+  var VPLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  var worksBuilt=false;
+  function vesc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function buildWorks(){
+    if(worksBuilt)return; worksBuilt=true;
+    var g=document.getElementById('vgrid'); if(!g)return;
+    g.innerHTML=WORKS.map(function(w){
+      return '<button class="vtile'+(w.feat?' feat':'')+'" type="button" data-key="'+w.key+'" data-cat="'+w.f+'" aria-label="Ver '+vesc(w.t)+'">'
+        +'<img class="vposter" src="'+w.poster+'" alt="" loading="lazy" decoding="async">'
+        +'<video class="vprev" muted loop playsinline preload="none" data-src="'+w.prev+'"></video>'
+        +'<span class="vscrim"></span><span class="vplay">'+VPLAY+'</span>'
+        +'<div class="vmeta"><div class="vc">'+vesc(w.cat)+'</div><h3>'+vesc(w.t)+'</h3>'+(w.cli?'<div class="vcli">'+vesc(w.cli)+'</div>':'')+'</div>'
+        +'</button>';
+    }).join('');
+    var tiles=g.querySelectorAll('.vtile');
+    tiles.forEach(function(el){
+      el.addEventListener('click',function(){ openLB(el.getAttribute('data-key')); });
+      if(!reduce){
+        var v=el.querySelector('.vprev');
+        el.addEventListener('mouseenter',function(){ if(v){ if(!v.getAttribute('src'))v.src=v.getAttribute('data-src'); el.classList.add('playing'); v.play().catch(function(){}); } });
+        el.addEventListener('mouseleave',function(){ if(v){ try{v.pause();}catch(e){} el.classList.remove('playing'); } });
+      }
+    });
+    var fb=document.querySelectorAll('#vfilters .pfilter2');
+    fb.forEach(function(b){ b.addEventListener('click',function(){ fb.forEach(function(x){x.classList.remove('active');}); b.classList.add('active'); var c=b.getAttribute('data-cat'); tiles.forEach(function(t){ t.style.display=(c==='all'||t.getAttribute('data-cat')===c)?'':'none'; }); }); });
+  }
+  route();
 
   // ---- fotografía: se arma desde /fotos-config.json (panel) ----
   var PHOTOS=[{"f":"BARBERINI-EVENT-109.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-119.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-133.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-135.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-16.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-2.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-22.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-36.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-4.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-43.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-5.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-52.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-58.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-67.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-79.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-8.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-90.jpg","c":"eventos"},{"f":"BARBERINI-EVENT-92.jpg","c":"eventos"},{"f":"DSC00026.jpg","c":"gastronomia"},{"f":"DSC00033.jpg","c":"gastronomia"},{"f":"FIGHT-NIGHTS-102.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-13.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-28.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-30.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-31.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-32.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-34.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-38.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-45.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-49.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-58.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-63.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-73.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-74.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-78.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-79.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-89.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-90.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-92.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-97.jpg","c":"eventos"},{"f":"FIGHT-NIGHTS-98.jpg","c":"eventos"},{"f":"JAPOND1-114.jpg","c":"viajes"},{"f":"JAPOND1-12.jpg","c":"viajes"},{"f":"JAPOND1-140.jpg","c":"viajes"},{"f":"JAPOND1-146.jpg","c":"viajes"},{"f":"JAPOND1-163.jpg","c":"viajes"},{"f":"JAPOND1-181.jpg","c":"viajes"},{"f":"JAPOND1-202.jpg","c":"viajes"},{"f":"JAPOND1-220.jpg","c":"viajes"},{"f":"JAPOND1-224.jpg","c":"viajes"},{"f":"JAPOND1-252.jpg","c":"viajes"},{"f":"JAPOND1-30.jpg","c":"viajes"},{"f":"JAPOND1-38.jpg","c":"viajes"},{"f":"JAPOND1-43.jpg","c":"viajes"},{"f":"JAPOND1-6.jpg","c":"viajes"},{"f":"JAPOND1-74.jpg","c":"viajes"},{"f":"JAPOND1-79.jpg","c":"viajes"},{"f":"JAPOND1-93.jpg","c":"viajes"},{"f":"LA25-31.jpg","c":"gastronomia"},{"f":"LA25-46.jpg","c":"gastronomia"},{"f":"LA25-53.jpg","c":"gastronomia"},{"f":"LA25-54.jpg","c":"gastronomia"},{"f":"LA25-6.jpg","c":"gastronomia"},{"f":"LA252-7.jpg","c":"gastronomia"},{"f":"LA252-8.jpg","c":"gastronomia"},{"f":"LM25-2.jpg","c":"gastronomia"},{"f":"LM25-4.jpg","c":"gastronomia"},{"f":"LOUIS-AGOSTO-25.jpg","c":"gastronomia"},{"f":"LOUIS-AGOSTO-38.jpg","c":"gastronomia"},{"f":"LOUIS-AGOSTO-9.jpg","c":"gastronomia"},{"f":"POST-ICELAND-04.jpg","c":"viajes"},{"f":"POST-ICELAND-05.jpg","c":"viajes"},{"f":"POST-ICELAND-07.jpg","c":"viajes"},{"f":"POST-ICELAND-08.jpg","c":"viajes"},{"f":"POSTS-NYC-03.jpg","c":"viajes"},{"f":"RECORD-GUACAMOLE-10.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-101.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-102.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-104.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-115.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-116.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-161.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-162.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-164.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-19.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-22.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-29.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-34.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-39.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-41.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-60.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-74.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-75.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-9.jpg","c":"corporativo"},{"f":"RECORD-GUACAMOLE-94.jpg","c":"corporativo"},{"f":"TOBIKO-11.jpg","c":"gastronomia"},{"f":"TOBIKO-14.jpg","c":"gastronomia"},{"f":"TOBIKO-19.jpg","c":"gastronomia"},{"f":"TOBIKO-21.jpg","c":"gastronomia"},{"f":"TOBIKO-34.jpg","c":"gastronomia"},{"f":"TOBIKO-40.jpg","c":"gastronomia"},{"f":"TOBIKO-48.jpg","c":"gastronomia"},{"f":"TOBIKO-61.jpg","c":"gastronomia"},{"f":"TRUEMAKEUP-106.jpg","c":"eventos"},{"f":"TRUEMAKEUP-110.jpg","c":"eventos"},{"f":"TRUEMAKEUP-16.jpg","c":"eventos"},{"f":"TRUEMAKEUP-2.jpg","c":"eventos"},{"f":"TRUEMAKEUP-32.jpg","c":"eventos"},{"f":"TRUEMAKEUP-39.jpg","c":"eventos"},{"f":"TRUEMAKEUP-4.jpg","c":"eventos"},{"f":"TRUEMAKEUP-42.jpg","c":"eventos"},{"f":"TRUEMAKEUP-47.jpg","c":"eventos"},{"f":"TRUEMAKEUP-52.jpg","c":"eventos"},{"f":"TRUEMAKEUP-65.jpg","c":"eventos"},{"f":"TRUEMAKEUP.jpg","c":"eventos"}];
@@ -562,9 +641,9 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
 
   // ---- smooth anchors (con salida de fotografía) ----
   document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){
-    var href=a.getAttribute('href'); if(href==='#fotografia')return;
+    var href=a.getAttribute('href'); if(href==='#fotografia'||href==='#portafolio')return;
     var t; try{t=document.querySelector(href);}catch(_){t=null;}
-    if(t){ e.preventDefault(); if(location.hash==='#fotografia'){ history.replaceState('','',location.pathname+location.search); route(); } t.scrollIntoView({behavior:reduce?'auto':'smooth'}); }
+    if(t){ e.preventDefault(); if(location.hash==='#fotografia'||location.hash==='#portafolio'){ history.replaceState('','',location.pathname+location.search); route(); } t.scrollIntoView({behavior:reduce?'auto':'smooth'}); }
   });});
 })();
 </script>
