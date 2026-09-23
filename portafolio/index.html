@@ -6,6 +6,7 @@
 <title>Portafolio — Catch a Film Studio</title>
 <meta name="description" content="Portafolio de video de Catch a Film Studio. Producción audiovisual para marcas, eventos y negocios.">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B0809">
 <meta property="og:title" content="Portafolio — Catch a Film Studio">
 <meta property="og:description" content="Producción audiovisual para marcas, eventos y negocios.">
 <meta property="og:type" content="website">
@@ -23,8 +24,11 @@
 @font-face{font-family:'Montserrat'; font-weight:400; font-display:swap; src:url(../fonts/montserrat-400.woff2) format('woff2')}
 @font-face{font-family:'Montserrat'; font-weight:700; font-display:swap; src:url(../fonts/montserrat-700.woff2) format('woff2')}
 :root{
-  --negro:#050A0A; --petroleo:#0D191F; --card:#11212A; --card-2:#152935;
-  --salvia:#BBC9C7; --bruma:#E0EAE9; --line:rgba(187,201,199,.14);
+  /* Identidad Vino — igual que catchafilmstudio.com */
+  --negro:#0B0809; --petroleo:#171015; --card:#171015; --card-2:#20161B;
+  --salvia:#9A8A91;                     /* texto tenue (muted) */
+  --accent:#BE4257; --accent2:#7A2137;  /* vino: acentos y categorías */
+  --bruma:#ECE7EA; --line:rgba(222,205,212,.12);
   --wa:#25D366; --wa-dark:#1FB457;
   --maxw:1240px; --gap:14px; --r:20px;
   --display:'CatchImpact','Haettenschweiler','Arial Narrow Bold',sans-serif;
@@ -48,8 +52,8 @@ body::before{
 body::after{
   content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
   background:
-    radial-gradient(900px 520px at 78% -8%, rgba(21,41,53,.85), transparent 65%),
-    radial-gradient(700px 480px at 8% 105%, rgba(13,25,31,.9), transparent 60%);
+    radial-gradient(900px 520px at 78% -8%, rgba(190,66,87,.12), transparent 62%),
+    radial-gradient(700px 480px at 8% 105%, rgba(32,22,27,.92), transparent 60%);
 }
 a{color:inherit; text-decoration:none}
 img{max-width:100%; display:block}
@@ -71,10 +75,10 @@ header{padding:clamp(1.5rem,4vw,2.5rem) 0 clamp(1.1rem,3vw,1.6rem)}
   border:1px solid transparent; font-family:var(--body);
   transition:transform .15s ease, background .2s, border-color .2s, color .2s;
 }
-.btn-wa{background:var(--wa); color:#04140a}
-.btn-wa:hover{background:var(--wa-dark); transform:translateY(-2px)}
+.btn-wa{background:linear-gradient(115deg,var(--accent),var(--accent2)); color:#fff; box-shadow:0 8px 30px -8px rgba(190,66,87,.6)}
+.btn-wa:hover{transform:translateY(-2px); box-shadow:0 12px 34px -8px rgba(190,66,87,.72); filter:brightness(1.06)}
 .btn-ghost{border-color:var(--line); color:var(--bruma); background:rgba(255,255,255,.02)}
-.btn-ghost:hover{border-color:var(--salvia); transform:translateY(-2px)}
+.btn-ghost:hover{border-color:var(--accent); color:#fff; transform:translateY(-2px)}
 
 /* ===== BENTO ===== */
 main{padding-bottom:clamp(2rem,6vw,4rem)}
@@ -121,7 +125,7 @@ main{padding-bottom:clamp(2rem,6vw,4rem)}
 .tinfo{position:absolute; left:0; right:0; bottom:0; padding:clamp(1rem,2vw,1.5rem); z-index:2}
 .tcat{
   display:inline-block; font-size:.63rem; font-weight:700; letter-spacing:.26em;
-  text-transform:uppercase; color:var(--salvia); margin-bottom:.45rem;
+  text-transform:uppercase; color:var(--accent); margin-bottom:.45rem;
 }
 .ttitle{
   font-family:var(--display); font-weight:400; text-transform:uppercase;
@@ -157,9 +161,9 @@ main{padding-bottom:clamp(2rem,6vw,4rem)}
 }
 .info-top .eyebrow{
   display:inline-flex; align-items:center; gap:.5rem; font-size:.63rem; font-weight:700;
-  letter-spacing:.26em; text-transform:uppercase; color:var(--salvia);
+  letter-spacing:.26em; text-transform:uppercase; color:var(--accent);
 }
-.eyebrow .lens{width:13px; height:13px; flex:none; color:var(--salvia)}
+.eyebrow .lens{width:13px; height:13px; flex:none; color:var(--accent)}
 .info-h{
   font-family:var(--display); font-weight:400; text-transform:uppercase; line-height:.94;
   font-size:clamp(1.9rem,3.4vw,2.7rem); margin:.7rem 0 .55rem; letter-spacing:.015em;
@@ -194,7 +198,7 @@ footer{
 .foot{display:flex; align-items:center; justify-content:space-between; gap:1.2rem; flex-wrap:wrap}
 .foot-txt{font-size:.78rem; color:var(--salvia); letter-spacing:.04em}
 .foot-txt a{border-bottom:1px solid var(--line)}
-.foot-txt a:hover{color:var(--bruma); border-color:var(--salvia)}
+.foot-txt a:hover{color:var(--bruma); border-color:var(--accent)}
 
 /* ===== LIGHTBOX ===== */
 /* por encima del grano (z-index 9999), si no el ruido queda sobre el video.
@@ -221,7 +225,7 @@ footer{
 .lb-close, .lb-nav{
   position:absolute; z-index:5; width:46px; height:46px; border-radius:999px;
   display:grid; place-items:center; cursor:pointer; color:var(--bruma);
-  background:rgba(17,33,42,.85); border:1px solid var(--line);
+  background:rgba(32,22,27,.85); border:1px solid var(--line);
   transition:background .2s, color .2s, transform .2s;
 }
 .lb-close:hover, .lb-nav:hover{background:var(--bruma); color:var(--negro); transform:scale(1.07)}
