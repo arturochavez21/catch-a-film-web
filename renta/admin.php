@@ -296,7 +296,7 @@ $catName = [];
 foreach ($C['categorias'] as $k) $catName[$k['id']] = $k;
 
 function thumb_html($p, $icono) {
-    $u = renta_foto_url($p['foto'] ?? '');
+    $u = renta_foto_url($p['foto'] ?? '', $p['id'] ?? '');
     if ($u) return "<img class='" . (str_ends_with($u, '.png') ? 'cut' : 'full') . "' src='" . h($u) . "' alt='' loading='lazy'>";
     return renta_icon($icono);
 }
@@ -411,7 +411,8 @@ page_top(['catalogo' => 'Catálogo', 'form' => 'Equipo', 'cats' => 'Categorías'
       <div class="pprev" id="pPrev"><?= thumb_html($p, $ico) ?></div>
       <label class="fl">Foto<input type="file" name="foto" id="fFoto" accept="image/jpeg,image/png,image/webp"></label>
       <p class="hint">Queda mejor en <b>PNG sin fondo</b>: el equipo “flota” sobre la tarjeta. Un JPG también sirve (se muestra a sangre). Se ajusta sola a 1000 px.</p>
-      <?php if (renta_foto_url($p['foto'])): ?><label class="chk"><input type="checkbox" name="quitar_foto" value="1"> Quitar la foto actual</label><?php endif; ?>
+      <?php if (renta_valid_foto($p['foto'])): ?><label class="chk"><input type="checkbox" name="quitar_foto" value="1"> Quitar la foto que subiste<?php if (renta_foto_fabrica($p['id'])): ?> (vuelve la de fábrica)<?php endif; ?></label>
+      <?php elseif (renta_foto_fabrica($p['id'])): ?><p class="hint">Se está usando la <b>foto de fábrica</b> del equipo. Sube una tuya para reemplazarla.</p><?php endif; ?>
     </div>
     <div class="pbtns">
       <button class="btn" type="submit"><?= $isNew ? 'Agregar al catálogo' : 'Guardar cambios' ?></button>

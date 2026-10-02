@@ -323,7 +323,7 @@ footer{padding:2.6rem 0 2.4rem;border-top:1px solid var(--line)}
       <?php if ($k['desc'] !== ''): ?><p class="cat-d"><?= h($k['desc']) ?></p><?php endif; ?>
     </div>
     <div class="grid">
-      <?php foreach ($byCat[$k['id']] as $p): $foto = renta_foto_url($p['foto']); ?>
+      <?php foreach ($byCat[$k['id']] as $p): $foto = renta_foto_url($p['foto'], $p['id']); ?>
       <article class="item<?= $p['disponible'] ? '' : ' na' ?>" data-id="<?= h($p['id']) ?>">
         <div class="item-img">
           <?php if ($foto): ?>

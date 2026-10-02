@@ -84,8 +84,15 @@ function renta_icon($name) {
         . ($paths[$name] ?? $paths['accesorio']) . '</svg>';
 }
 
-function renta_foto_url($foto) {
-    return renta_valid_foto($foto) ? '/renta/fotos/' . $foto : '';
+// URL de la foto del equipo: primero la que subió Arturo desde el panel; si no hay,
+// la foto de fábrica que viaja en Git (renta/img/<id>.png). Sin ninguna: ícono de categoría.
+function renta_foto_url($foto, $id = '') {
+    if (renta_valid_foto($foto)) return '/renta/fotos/' . $foto;
+    return renta_foto_fabrica($id);
+}
+function renta_foto_fabrica($id) {
+    if (!is_string($id) || !preg_match('/^[a-z0-9][a-z0-9-]{0,80}$/', $id)) return '';
+    return is_file(__DIR__ . '/img/' . $id . '.png') ? '/renta/img/' . $id . '.png' : '';
 }
 function renta_valid_foto($foto) {
     return is_string($foto) && preg_match('/^[a-z0-9][a-z0-9-]{0,80}\.(jpg|png)$/', $foto)
