@@ -160,6 +160,32 @@ function renta_save_upload($tmp, $id) {
     return basename($dst);
 }
 
+// De dónde llegó la visita, en una etiqueta legible.
+// 's' = etiqueta puesta a mano en el link (?s=ig); 'ref' = página de la que venía.
+function renta_origen($e) {
+    if (!array_key_exists('ref', $e) && !array_key_exists('s', $e)) return 'Sin dato';  // evento viejo
+    $s = strtolower(trim((string)($e['s'] ?? '')));
+    if ($s !== '') {
+        $etiquetas = ['ig' => 'Instagram', 'instagram' => 'Instagram', 'fb' => 'Facebook', 'facebook' => 'Facebook',
+            'wa' => 'WhatsApp', 'whatsapp' => 'WhatsApp', 'tiktok' => 'TikTok', 'tt' => 'TikTok', 'yt' => 'YouTube',
+            'qr' => 'Código QR', 'tarjeta' => 'Tarjeta', 'mail' => 'Correo', 'correo' => 'Correo'];
+        return $etiquetas[$s] ?? ucfirst($s);
+    }
+    $ref = strtolower(trim((string)($e['ref'] ?? '')));
+    if ($ref === '') return 'Directo o app';   // escribió el link, o vino de WhatsApp / Instagram / DM
+    $host = parse_url($ref, PHP_URL_HOST);
+    // Solo direcciones web reales; cualquier otra cosa cuenta como directo
+    if (!$host || !preg_match('#^https?://#', $ref) || !preg_match('/^[a-z0-9.-]+$/', $host)) return 'Directo o app';
+    $host = preg_replace('/^www\./', '', $host);
+    if (str_contains($host, 'catchafilmstudio')) return 'Tu sitio';
+    foreach ([['google', 'Google'], ['bing', 'Bing'], ['duckduckgo', 'DuckDuckGo'], ['yahoo', 'Yahoo'],
+              ['instagram', 'Instagram'], ['facebook', 'Facebook'], ['fb.', 'Facebook'], ['whatsapp', 'WhatsApp'],
+              ['t.co', 'X (Twitter)'], ['tiktok', 'TikTok'], ['youtu', 'YouTube'], ['linkedin', 'LinkedIn']] as [$k, $v]) {
+        if (str_contains($host, $k)) return $v;
+    }
+    return substr($host, 0, 40);
+}
+
 // ---------- Métricas ----------
 // Un evento por línea (JSON): {"t":ts,"k":"uno|carrito|agregar","ids":[...],"n":[nombres],"d":días,"tot":total}
 function renta_clicks_file() { return RENTA_DATA . '/clics.jsonl'; }

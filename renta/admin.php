@@ -482,6 +482,7 @@ page_top(['catalogo' => 'Catálogo', 'form' => 'Equipo', 'cats' => 'Categorías'
     }
     $week = array_fill(0, 7, 0);
     $top = []; $added = 0; $one = 0; $cart = 0; $valor = 0; $dSum = 0; $dN = 0; $recent = []; $all = 0;
+    $orig = []; $devs = ['movil' => 0, 'escritorio' => 0];
     $current = [];
     foreach ($C['productos'] as $p) $current[$p['id']] = $p['nombre'];
 
@@ -502,12 +503,17 @@ page_top(['catalogo' => 'Catálogo', 'form' => 'Equipo', 'cats' => 'Categorías'
             $top[$pid]['c'] = ($top[$pid]['c'] ?? 0) + 1;
         }
         $recent[] = $e;
+        $o = renta_origen($e);
+        $orig[$o] = ($orig[$o] ?? 0) + 1;
+        $devs[($e['dev'] ?? '') === 'movil' ? 'movil' : 'escritorio']++;
     }
     $req = $one + $cart;
     uasort($top, fn($a, $b) => $b['c'] <=> $a['c']);
     $top = array_slice($top, 0, 10, true);
     $recent = array_slice(array_reverse($recent), 0, 15);
     $maxTop = $top ? max(array_column($top, 'c')) : 1;
+    arsort($orig);
+    $maxOrig = $orig ? max($orig) : 1;
     $pct = fn($n) => $req ? round($n / $req * 100) : 0;
 ?>
   <div class="rhead">
@@ -531,6 +537,33 @@ page_top(['catalogo' => 'Catálogo', 'form' => 'Equipo', 'cats' => 'Categorías'
     <div class="card2"><div class="empty2">Aún no hay actividad en este periodo.<br>Aparecerá en cuanto la gente use el catálogo<?= $all ? ' (hay ' . $all . ' registros más antiguos)' : '' ?>.</div></div>
   <?php else: ?>
   <div class="cgrid">
+    <section class="card2 wide">
+      <h2>De dónde llegan</h2><p class="sub">La página de la que venían cuando abrieron el catálogo</p>
+      <?php if (!$orig): ?><div class="empty2">Sin solicitudes en este periodo.</div><?php else: ?>
+      <ol class="topl">
+        <?php foreach ($orig as $nombre => $c): ?>
+        <li><span class="tn"><?= h($nombre) ?></span><span class="tb"><i style="width:<?= max(1, round($c / $maxOrig * 100)) ?>%"></i></span><span class="tv"><?= $c ?></span></li>
+        <?php endforeach; ?>
+      </ol>
+      <p class="sub" style="margin-top:.9rem"><b>Tu sitio</b>: entraron por el menú de catchafilmstudio.com ·
+        <b>Directo o app</b>: escribieron el link o lo abrieron desde WhatsApp, Instagram o un mensaje ·
+        <b>Sin dato</b>: solicitudes anteriores a que se midiera el origen.</p>
+      <p class="sub">Dispositivo: <b><?= $devs['movil'] ?></b> desde celular · <b><?= $devs['escritorio'] ?></b> desde computadora.</p>
+      <?php endif; ?>
+      <details class="tbl"><summary>Links para medir cada canal</summary>
+        <p class="sub">Comparte el link con su etiqueta y aquí aparecerá por dónde entró cada quien:</p>
+        <div class="tscroll"><table class="dtable">
+          <tr><th>Dónde lo compartes</th><th>Link que compartes</th></tr>
+          <tr><td>Instagram (bio o historia)</td><td>catchafilmstudio.com/renta/?s=ig</td></tr>
+          <tr><td>Estado o chat de WhatsApp</td><td>catchafilmstudio.com/renta/?s=wa</td></tr>
+          <tr><td>Tarjeta de presentación o QR</td><td>catchafilmstudio.com/renta/?s=qr</td></tr>
+          <tr><td>Correo o cotización</td><td>catchafilmstudio.com/renta/?s=correo</td></tr>
+          <tr><td>TikTok</td><td>catchafilmstudio.com/renta/?s=tiktok</td></tr>
+        </table></div>
+        <p class="sub">Puedes inventar la etiqueta que quieras: lo que pongas después de <b>?s=</b> es lo que verás en esta lista.</p>
+      </details>
+    </section>
+
     <section class="card2 wide">
       <h2>Solicitudes por día</h2><p class="sub">Aperturas de WhatsApp · últimos <?= $period ?> días</p>
       <div class="chart" id="chDaily"></div>
@@ -572,10 +605,11 @@ page_top(['catalogo' => 'Catálogo', 'form' => 'Equipo', 'cats' => 'Categorías'
       <h2>Solicitudes recientes</h2><p class="sub">Lo que pidieron (la conversación sigue en tu WhatsApp)</p>
       <?php if (!$recent): ?><div class="empty2">Sin solicitudes en este periodo.</div><?php else: ?>
       <div class="tscroll"><table class="dtable">
-        <tr><th>Fecha</th><th>Tipo</th><th>Equipo</th><th>Días</th><th>Total est.</th></tr>
+        <tr><th>Fecha</th><th>Origen</th><th>Tipo</th><th>Equipo</th><th>Días</th><th>Total est.</th></tr>
         <?php foreach ($recent as $e): ?>
         <tr>
           <td><?= $DIA[date('N', $e['t']) - 1] . ' ' . date('j', $e['t']) . ' ' . $MES[date('n', $e['t']) - 1] . ' · ' . date('H:i', $e['t']) ?></td>
+          <td><?= h(renta_origen($e)) ?><?= ($e['dev'] ?? '') === 'movil' ? ' · celular' : '' ?></td>
           <td><?= $e['k'] === 'carrito' ? 'Carrito' : 'Un equipo' ?></td>
           <td><?= h(implode(', ', (array)($e['n'] ?? []))) ?></td>
           <td class="n"><?= ($e['d'] ?? 0) ? (int)$e['d'] : '—' ?></td>

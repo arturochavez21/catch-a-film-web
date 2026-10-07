@@ -25,6 +25,12 @@ if (!$ids) { http_response_code(400); exit('{}'); }
 
 if (!renta_rate_ok()) { http_response_code(429); exit('{}'); }
 
+// De dónde llegó: la página anterior y la etiqueta del link (?s=ig). Ambas vienen del
+// navegador, así que se recortan y se limpian antes de guardarlas.
+$ref = preg_replace('/[^\x20-\x7E]/', '', substr((string)($in['ref'] ?? ''), 0, 200));
+$s   = strtolower(substr(preg_replace('/[^A-Za-z0-9_-]/', '', (string)($in['s'] ?? '')), 0, 40));
+$ua  = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
+
 renta_log_event([
     't'   => time(),
     'k'   => $kind,
@@ -32,5 +38,8 @@ renta_log_event([
     'n'   => array_map(fn($i) => $names[$i], $ids),
     'd'   => max(0, min(365, (int)($in['d'] ?? 0))),
     'tot' => max(0, min(10000000, (int)($in['tot'] ?? 0))),
+    'ref' => $ref,
+    's'   => $s,
+    'dev' => preg_match('/Mobile|Android|iPhone|iPad/i', $ua) ? 'movil' : 'escritorio',
 ]);
 echo '{"ok":true}';

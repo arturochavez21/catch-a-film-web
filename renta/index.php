@@ -438,6 +438,19 @@ footer{padding:2.6rem 0 2.4rem;border-top:1px solid var(--line)}
 (function(){
   var P = <?= json_encode((object)$P, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) ?>;
   var WA = '<?= RENTA_WA ?>', KEY = 'catch_renta_v1';
+
+  // De dónde llegó esta persona. Se guarda el PRIMER origen del navegador, para que
+  // no se pierda si vuelve después escribiendo el link.
+  var SRC = (function(){
+    var qs = new URLSearchParams(location.search);
+    var tag = (qs.get('s') || qs.get('utm_source') || '').slice(0, 40);
+    var previo = null;
+    try { previo = JSON.parse(localStorage.getItem('catch_renta_src') || 'null'); } catch (e) {}
+    if (previo && previo.ref !== undefined && !tag) return previo;
+    var nuevo = { ref: (document.referrer || '').slice(0, 200), s: tag };
+    try { localStorage.setItem('catch_renta_src', JSON.stringify(nuevo)); } catch (e) {}
+    return nuevo;
+  })();
   var $ = function(s){ return document.querySelector(s); };
   var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
   var html = document.documentElement;
@@ -502,7 +515,7 @@ footer{padding:2.6rem 0 2.4rem;border-top:1px solid var(--line)}
   }
   function track(k, ids, tot){
     try {
-      var body = JSON.stringify({ k:k, ids:ids, d:days(), tot:Math.round(tot) });
+      var body = JSON.stringify({ k:k, ids:ids, d:days(), tot:Math.round(tot), ref:SRC.ref, s:SRC.s });
       if (navigator.sendBeacon) navigator.sendBeacon('/renta/click.php', new Blob([body], { type:'text/plain' }));
       else fetch('/renta/click.php', { method:'POST', body:body, keepalive:true });
     } catch (e) {}

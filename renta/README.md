@@ -21,7 +21,7 @@ para editar el catálogo y ver métricas de clics. PHP sin base de datos (JSON e
 | `click.php` | sí | Registra `uno` (WhatsApp de un equipo), `carrito` (WhatsApp del carrito) y `agregar` (agregó al carrito) |
 | `catalogo-inicial.json` | sí | Catálogo con el que arranca. **Solo se usa mientras el panel nunca haya guardado** |
 | `data/catalogo.json` | **no** | Catálogo editado desde el panel (manda sobre el inicial) |
-| `data/clics.jsonl` | **no** | Un evento por línea: `{t, k, ids, n, d, tot}` |
+| `data/clics.jsonl` | **no** | Un evento por línea: `{t, k, ids, n, d, tot, ref, s, dev}` |
 | `data/limite.json` | **no** | Contador del límite por IP (40 eventos / 10 min) |
 | `fotos/*.jpg|png` | **no** | Fotos subidas desde el panel (nombre único por subida → caché de un año) |
 
@@ -33,6 +33,17 @@ para editar el catálogo y ver métricas de clics. PHP sin base de datos (JSON e
 - Precio por día. Días = diferencia entre “Recoges” y “Devuelves” (mismo día o día siguiente = 1 día).
 - La renta se liquida al entregar el equipo. Requisitos: copia de INE o pasaporte + comprobante de domicilio ≤ 3 meses.
 - Descuento según equipo y días (no se calcula: se pregunta). Operador: se cotiza aparte (checkbox en el carrito).
+
+## De dónde llegan (origen de cada solicitud)
+
+`index.php` guarda en `localStorage` (`catch_renta_src`) el **primer** origen del navegador:
+`ref` = `document.referrer`, `s` = la etiqueta del link (`?s=ig`, también acepta `?utm_source=`).
+Viaja en cada evento a `click.php`, que la limpia (solo ASCII y 200 caracteres; `s` solo letras y números).
+`renta_origen()` en `lib.php` la convierte en etiqueta: Google / Instagram / **Tu sitio** (vino del menú del home) /
+**Directo o app** (sin referrer: link escrito, WhatsApp, DM) / **Sin dato** (eventos anteriores a esta medición) / el dominio tal cual.
+El panel lo muestra en la tarjeta "De dónde llegan" y en la columna Origen de "Solicitudes recientes".
+
+Para medir un canal: compartir `catchafilmstudio.com/renta/?s=<etiqueta>`.
 
 ## Fotos
 
