@@ -34,6 +34,13 @@ para editar el catálogo y ver métricas de clics. PHP sin base de datos (JSON e
 - La renta se liquida al entregar el equipo. Requisitos: copia de INE o pasaporte + comprobante de domicilio ≤ 3 meses.
 - Descuento según equipo y días (no se calcula: se pregunta). Operador: se cotiza aparte (checkbox en el carrito).
 
+## Página NO listada (decisión de Arturo, 2026-10-07)
+
+Solo renta a conocidos, así que la renta no se anuncia: **no va en el menú del home** y lleva
+`<meta name="robots" content="noindex,nofollow,noarchive">`. El link sigue funcionando para quien lo tenga.
+No poner `Disallow: /renta/` en un robots.txt: si Google no puede entrar, no lee el `noindex` y la URL
+puede quedarse en los resultados. Si algún día se quiere pública: quitar el meta y devolver el enlace al menú.
+
 ## De dónde llegan (origen de cada solicitud)
 
 `index.php` guarda en `localStorage` (`catch_renta_src`) el **primer** origen del navegador:
@@ -44,6 +51,9 @@ Viaja en cada evento a `click.php`, que la limpia (solo ASCII y 200 caracteres; 
 El panel lo muestra en la tarjeta "De dónde llegan" y en la columna Origen de "Solicitudes recientes".
 
 Para medir un canal: compartir `catchafilmstudio.com/renta/?s=<etiqueta>`.
+
+El mensaje de WhatsApp que arma el cliente **incluye el origen** (`📍 Llegué por: …`, con `origenTexto()` en
+`index.php`), para que el lead llegue etiquetado al chat sin tener que abrir el panel.
 
 ## Fotos
 

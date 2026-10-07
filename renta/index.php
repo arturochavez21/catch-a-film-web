@@ -35,6 +35,8 @@ $waOperador = wa_href("¡Hola Catch! 👋 Vengo del catálogo de renta. Me inter
 <title>Renta de equipo de filmación en Guadalajara · Catch a Film Studio</title>
 <meta name="description" content="Renta cámaras Sony, lentes, audio DJI y estabilizadores en Guadalajara. Elige tus fechas, arma tu carrito y confirma por WhatsApp.">
 <link rel="canonical" href="https://catchafilmstudio.com/renta/">
+<!-- Página no listada: no va en el menú del sitio ni en buscadores. Solo quien tiene el link. -->
+<meta name="robots" content="noindex,nofollow,noarchive">
 <meta property="og:title" content="Renta de equipo · Catch a Film Studio">
 <meta property="og:description" content="Cámaras, lentes, audio y estabilizadores en renta en Guadalajara.">
 <meta property="og:url" content="https://catchafilmstudio.com/renta/">
@@ -494,6 +496,24 @@ footer{padding:2.6rem 0 2.4rem;border-top:1px solid var(--line)}
   }); });
 
   // ---------- WhatsApp ----------
+  // Cómo llegó esta persona, en palabras, para que el mensaje de WhatsApp lo diga
+  function origenTexto(){
+    var etiquetas = { ig:'Instagram', instagram:'Instagram', fb:'Facebook', facebook:'Facebook',
+      wa:'WhatsApp', whatsapp:'WhatsApp', tiktok:'TikTok', tt:'TikTok', yt:'YouTube',
+      qr:'un código QR', tarjeta:'una tarjeta', mail:'un correo', correo:'un correo' };
+    var s = (SRC.s || '').toLowerCase();
+    if (s) return etiquetas[s] || s;
+    var ref = (SRC.ref || '').toLowerCase();
+    if (!ref) return 'un link directo';
+    var host = ref.replace(/^https?:\/\//, '').split('/')[0].replace(/^www\./, '');
+    if (host.indexOf('catchafilmstudio') > -1) return 'tu sitio web';
+    var sitios = [['google','Google'],['bing','Bing'],['duckduckgo','DuckDuckGo'],['instagram','Instagram'],
+      ['facebook','Facebook'],['fb.','Facebook'],['whatsapp','WhatsApp'],['t.co','X'],['tiktok','TikTok'],
+      ['youtu','YouTube'],['linkedin','LinkedIn']];
+    for (var i = 0; i < sitios.length; i++) if (host.indexOf(sitios[i][0]) > -1) return sitios[i][1];
+    return host;
+  }
+
   function waUrl(items, op){
     var n = days(), pd = 0, L = ['¡Hola Catch! 👋 Vengo del catálogo de renta y me interesa:', ''];
     Object.keys(items).forEach(function(id){
@@ -510,6 +530,7 @@ footer{padding:2.6rem 0 2.4rem;border-top:1px solid var(--line)}
       L.push('💰 Total por día: ' + money(pd) + ' MXN');
     }
     if (op) L.push('🎬 También necesito operador.');
+    L.push('📍 Llegué por: ' + origenTexto());
     L.push('', '¿Está disponible?');
     return 'https://wa.me/' + WA + '?text=' + encodeURIComponent(L.join('\n'));
   }
