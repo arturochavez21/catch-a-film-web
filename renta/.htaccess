@@ -2,6 +2,11 @@
 Options -Indexes
 DirectoryIndex index.php
 
+# Servicio privado: NO indexar en buscadores (refuerza el meta noindex del HTML)
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow, noarchive"
+</IfModule>
+
 # Nunca servir datos ni el núcleo por HTTP
 <FilesMatch "\.(json|jsonl|md|tmp)$">
   Require all denied
