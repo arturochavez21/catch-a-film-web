@@ -283,6 +283,10 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
 .vtile{position:relative;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:var(--bg2);border:1px solid var(--line);cursor:pointer;padding:0;margin:0;width:100%;text-align:left;font:inherit;color:inherit;display:block}
 .vtile.feat{grid-column:1/-1;aspect-ratio:21/9}
 @media(max-width:600px){.vtile.feat{aspect-ratio:16/9}}
+.vtile.vert{aspect-ratio:9/16}
+.vgrid.gm-vert{grid-template-columns:repeat(4,1fr)}
+@media(max-width:1100px){.vgrid.gm-vert{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.vgrid.gm-vert{grid-template-columns:repeat(2,1fr)}}
 .vtile .vposter,.vtile .vprev{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
 .vtile .vprev{opacity:0;transition:opacity .4s}
 .vtile.playing .vprev{opacity:1}
@@ -479,9 +483,9 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
 <div id="videoView" class="pview">
   <div class="wrap pv-intro">
     <button id="vvBack" class="pv-back">← Volver al inicio</button>
-    <span class="eyebrow">Portafolio</span><h2>Proyectos en <span class="grad">video</span></h2>
-    <p class="lead">Una selección de nuestro trabajo audiovisual. Filtra por categoría y da clic en cualquier proyecto para verlo completo.</p>
-    <div class="pfilters2" id="vfilters"><button class="pfilter2 active" data-cat="all">Todos</button><button class="pfilter2" data-cat="eventos">Eventos</button><button class="pfilter2" data-cat="negocios">Negocios comerciales</button><button class="pfilter2" data-cat="corporativo">Corporativo</button><button class="pfilter2" data-cat="conceptuales">Conceptuales</button></div>
+    <span class="eyebrow" id="vvEye">Portafolio</span><h2 id="vvH2">Proyectos en <span class="grad">video</span></h2>
+    <p class="lead" id="vvLead">Una selección de nuestro trabajo audiovisual. Filtra por categoría y da clic en cualquier proyecto para verlo completo.</p>
+    <div class="pfilters2" id="vfilters"><button class="pfilter2 active" data-cat="all">Todos</button><button class="pfilter2" data-cat="eventos">Eventos</button><button class="pfilter2" data-cat="negocios">Negocios comerciales</button><button class="pfilter2" data-cat="corporativo">Corporativo</button><button class="pfilter2" data-cat="conceptuales">Conceptuales</button><button class="pfilter2" data-cat="marca">Marca personal</button></div>
   </div>
   <div class="vgrid" id="vgrid"></div>
 </div>
@@ -575,7 +579,7 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
   }
 
   // ---- videos: lightbox + previews del trabajo ----
-  var VIDEOS={reel:'/videos/demo-reel.mp4',sipnav:'/videos/catch-sipnav.mp4',truemakeup:'/videos/catch-truemakeup.mp4',wahl:'/videos/catch-wahl.mp4',souldance:'/videos/catch-souldance.mp4',realme:'/videos/catch-realme.mp4',hycore:'/videos/catch-hycore.mp4',corporativo:'/videos/catch-corporativo.mp4',mds:'/videos/catch-mds.mp4',synergy:'/videos/catch-synergy.mp4',synergy2:'/videos/catch-synergy2.mp4',tbc:'/videos/catch-tbc.mp4',marianita:'/videos/catch-marianita.mp4'};
+  var VIDEOS={reel:'/videos/demo-reel.mp4',sipnav:'/videos/catch-sipnav.mp4',truemakeup:'/videos/catch-truemakeup.mp4',wahl:'/videos/catch-wahl.mp4',souldance:'/videos/catch-souldance.mp4',realme:'/videos/catch-realme.mp4',hycore:'/videos/catch-hycore.mp4',corporativo:'/videos/catch-corporativo.mp4',mds:'/videos/catch-mds.mp4',synergy:'/videos/catch-synergy.mp4',synergy2:'/videos/catch-synergy2.mp4',tbc:'/videos/catch-tbc.mp4',marianita:'/videos/catch-marianita.mp4',mpdraale1:'/videos/catch-mpdraale1.mp4',mpdraale2:'/videos/catch-mpdraale2.mp4',mpgabo1:'/videos/catch-mpgabo1.mp4',mpgabo2:'/videos/catch-mpgabo2.mp4',mpgabo3:'/videos/catch-mpgabo3.mp4',mpfin1:'/videos/catch-mpfin1.mp4',mpfin2:'/videos/catch-mpfin2.mp4',mpfin3:'/videos/catch-mpfin3.mp4'};
   var vlb=document.getElementById('vlb'), vlbv=document.getElementById('vlbVideo'), vlbC=document.getElementById('vlbClose');
   function openLB(key){ if(!VIDEOS[key])return; vlbv.src=VIDEOS[key]; vlb.classList.add('open'); document.body.style.overflow='hidden'; vlbv.play().catch(function(){}); }
   function closeLB(){ vlb.classList.remove('open'); document.body.style.overflow=''; try{vlbv.pause();}catch(e){} vlbv.removeAttribute('src'); vlbv.load(); }
@@ -593,12 +597,17 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
   var homeMain=document.querySelector('main'), homeFoot=document.querySelector('footer'),
       photoView=document.getElementById('photoView'), videoView=document.getElementById('videoView');
   function route(){
-    var h=location.hash, ph=(h==='#fotografia'), pv=(h==='#portafolio'), hide=ph||pv;
+    var h=location.hash, ph=(h==='#fotografia'), mp=(h==='#marca-personal'), pv=(h==='#portafolio'||mp), hide=ph||pv;
     if(photoView)photoView.classList.toggle('active',ph);
     if(videoView)videoView.classList.toggle('active',pv);
     if(homeMain)homeMain.style.display=hide?'none':'';
     if(homeFoot)homeFoot.style.display=hide?'none':'';
-    if(pv)buildWorks();
+    var eye=document.getElementById('vvEye'), vh2=document.getElementById('vvH2'), vle=document.getElementById('vvLead');
+    if(eye&&vh2&&vle){
+      if(mp){ eye.textContent='Portafolio'; vh2.innerHTML='Marca <span class="grad">personal</span>'; vle.textContent='Contenido de formato corto para profesionales — guion, dirección, cámara y edición. Da clic en cualquier reel para verlo completo.'; }
+      else { eye.textContent='Portafolio'; vh2.innerHTML='Proyectos en <span class="grad">video</span>'; vle.textContent='Una selección de nuestro trabajo audiovisual. Filtra por categoría y da clic en cualquier proyecto para verlo completo.'; }
+    }
+    if(pv){ buildWorks(); applyVFilter(mp?'marca':'all'); }
     if(hide)window.scrollTo(0,0);
   }
   window.addEventListener('hashchange',route);
@@ -619,7 +628,15 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
     {key:'souldance',cat:'Conceptuales',f:'conceptuales',t:'Catch × Soul Dance',cli:'Soul Dance',poster:'/videos/poster-souldance.jpg',prev:'/videos/prev-souldance.mp4'},
     {key:'mds',cat:'Eventos',f:'eventos',t:'Catch × MDS',cli:'MDS',poster:'/videos/lite-poster-mds.jpg',prev:'/videos/lite-mds.mp4'},
     {key:'tbc',cat:'Negocios comerciales',f:'negocios',t:'Catch × The Berry Co.',cli:'The Berry Co.',poster:'/videos/lite-poster-tbc.jpg',prev:'/videos/lite-tbc.mp4'},
-    {key:'hycore',cat:'Eventos',f:'eventos',t:'Catch × HyCore',cli:'HYCORE',poster:'/videos/lite-poster-hycore.jpg',prev:'/videos/lite-hycore.mp4'}
+    {key:'hycore',cat:'Eventos',f:'eventos',t:'Catch × HyCore',cli:'HYCORE',poster:'/videos/lite-poster-hycore.jpg',prev:'/videos/lite-hycore.mp4'},
+    {key:'mpdraale1',cat:'Marca personal',f:'marca',t:'Medicina estética',cli:'Rutina & skincare',poster:'/videos/lite-poster-mpdraale1.jpg',prev:'/videos/lite-mpdraale1.mp4'},
+    {key:'mpfin2',cat:'Marca personal',f:'marca',t:'Educación financiera',cli:'Plan de retiro',poster:'/videos/lite-poster-mpfin2.jpg',prev:'/videos/lite-mpfin2.mp4'},
+    {key:'mpgabo2',cat:'Marca personal',f:'marca',t:'Coaching de tenis',cli:'Historia & carrera',poster:'/videos/lite-poster-mpgabo2.jpg',prev:'/videos/lite-mpgabo2.mp4'},
+    {key:'mpdraale2',cat:'Marca personal',f:'marca',t:'Medicina estética',cli:'Hábitos & bienestar',poster:'/videos/lite-poster-mpdraale2.jpg',prev:'/videos/lite-mpdraale2.mp4'},
+    {key:'mpfin1',cat:'Marca personal',f:'marca',t:'Educación financiera',cli:'Inversión & CETES',poster:'/videos/lite-poster-mpfin1.jpg',prev:'/videos/lite-mpfin1.mp4'},
+    {key:'mpgabo1',cat:'Marca personal',f:'marca',t:'Coaching de tenis',cli:'Formación & valores',poster:'/videos/lite-poster-mpgabo1.jpg',prev:'/videos/lite-mpgabo1.mp4'},
+    {key:'mpfin3',cat:'Marca personal',f:'marca',t:'Educación financiera',cli:'Finanzas personales',poster:'/videos/lite-poster-mpfin3.jpg',prev:'/videos/lite-mpfin3.mp4'},
+    {key:'mpgabo3',cat:'Marca personal',f:'marca',t:'Coaching de tenis',cli:'Academia & método',poster:'/videos/lite-poster-mpgabo3.jpg',prev:'/videos/lite-mpgabo3.mp4'}
   ];
   var VPLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
   var worksBuilt=false;
@@ -628,7 +645,7 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
     if(worksBuilt)return; worksBuilt=true;
     var g=document.getElementById('vgrid'); if(!g)return;
     g.innerHTML=WORKS.map(function(w){
-      return '<button class="vtile'+(w.feat?' feat':'')+'" type="button" data-key="'+w.key+'" data-cat="'+w.f+'" aria-label="Ver '+vesc(w.t)+'">'
+      return '<button class="vtile'+(w.feat?' feat':'')+(w.f==='marca'?' vert':'')+'" type="button" data-key="'+w.key+'" data-cat="'+w.f+'" aria-label="Ver '+vesc(w.t)+'">'
         +'<img class="vposter" src="'+w.poster+'" alt="" loading="lazy" decoding="async">'
         +'<video class="vprev" muted loop playsinline preload="none" data-src="'+w.prev+'"></video>'
         +'<span class="vscrim"></span><span class="vplay">'+VPLAY+'</span>'
@@ -645,7 +662,18 @@ footer{padding:3rem 0 2.4rem;border-top:1px solid var(--line);background:var(--b
       }
     });
     var fb=document.querySelectorAll('#vfilters .pfilter2');
-    fb.forEach(function(b){ b.addEventListener('click',function(){ fb.forEach(function(x){x.classList.remove('active');}); b.classList.add('active'); var c=b.getAttribute('data-cat'); tiles.forEach(function(t){ t.style.display=(c==='all'||t.getAttribute('data-cat')===c)?'':'none'; }); }); });
+    fb.forEach(function(b){ b.addEventListener('click',function(){ applyVFilter(b.getAttribute('data-cat')); }); });
+    applyVFilter('all');
+  }
+  function applyVFilter(c){
+    var grid=document.getElementById('vgrid'); if(!grid)return;
+    document.querySelectorAll('#vfilters .pfilter2').forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-cat')===c); });
+    grid.classList.toggle('gm-vert', c==='marca');
+    grid.querySelectorAll('.vtile').forEach(function(t){
+      var tc=t.getAttribute('data-cat');
+      var show=(c==='all') ? (tc!=='marca') : (tc===c);
+      t.style.display=show?'':'none';
+    });
   }
   route();
 
